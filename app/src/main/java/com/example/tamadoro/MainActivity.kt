@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private var timerRunning = false
     //private val initialTime = 25 * 60 * 1000L 25 mins
-    private val initialTime = 7*1000L//for test purposes
+    private val initialTime = 2*1000L//for test purposes
     private var timeRemaining:Long = 0
     private val statistics = Statistics()
 
@@ -36,14 +36,13 @@ class MainActivity : AppCompatActivity() {
         totalDurationTextView = findViewById(R.id.totalDurationTextView)
         showTotalDurationButton = findViewById(R.id.showTotalDurationButton)
 
-
         statisticsViewBtn = findViewById(R.id.statisticsViewBtn)
         statisticsViewBtn.setOnClickListener {
             val openStatisticsActivity = Intent(this,StatisticsActivity::class.java)
             startActivity(openStatisticsActivity)
         }
 
-        startButton.setOnClickListener {
+        startButton.setOnClickListener {//when start button clicked
             if (timerRunning){
                 pauseTimer()
             } else{
@@ -52,8 +51,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         showTotalDurationButton.setOnClickListener {
-            val totalDuration = statistics.getTotalSessions()
-            totalDurationTextView.text = "Total Duration: $totalDuration"
+            val totalDuration = statistics.getTotalDuration()
+            val totalSessions = statistics.getTotalSessions()
+            totalDurationTextView.text = "Total Duration: $totalDuration \nTotal sessions: $totalSessions"
         }
 
         stopButton.setOnClickListener {
@@ -70,9 +70,10 @@ class MainActivity : AppCompatActivity() {
                 timerTextView.text = formatTime(millisUntilFinished)
             }
 
-            override fun onFinish(){
+            override fun onFinish(){ //WHEN TIMER ENDS
                 stopTimer()
                 timerTextView.text = "Finished!"
+                timeRemaining = initialTime
 
                 //val minutes = (initialTime/1000/60).toInt()
                 val minutes = ((initialTime/1000)%60).toInt()
