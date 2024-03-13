@@ -1,12 +1,12 @@
 package com.example.tamadoro
 
 class Statistics {
-    data class Session(val minutes: Int)
+    data class Session(val seconds: Int)
 
     private val totalSessions: MutableList<Session> = mutableListOf()
 
-    fun addSession(minutes: Int){
-        val session = Session(minutes)
+    fun addSession(seconds: Int){
+        val session = Session(seconds)
         totalSessions.add(session)
     }
 
@@ -23,7 +23,7 @@ class Statistics {
     }
 
     fun getTotalDuration(): Long{
-        return totalSessions.sumOf {it.minutes.toLong()}
+        return totalSessions.sumOf {it.seconds.toLong()}
     }
 
     fun getAverageDuration():Long{
