@@ -1,4 +1,4 @@
-package com.example.tamadoro
+package io.github.finnimo.tamadoro
 
 class Statistics {
     data class Session(val seconds: Int)
@@ -10,7 +10,7 @@ class Statistics {
         totalSessions.add(session)
     }
 
-    fun getSession(index:Int):Session?{
+    fun getSession(index:Int): Session?{
         return if (index in totalSessions.indices){
             totalSessions[index]
         } else{

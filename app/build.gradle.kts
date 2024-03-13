@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.tamadoro"
+    namespace = "io.github.finnimo.tamadoro"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.tamadoro"
+        applicationId = "io.github.finnimo.tamadoro"
         minSdk = 23
         targetSdk = 34
         versionCode = 1

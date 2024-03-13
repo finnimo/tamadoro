@@ -1,4 +1,4 @@
-package com.example.tamadoro
+package io.github.finnimo.tamadoro
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
         statisticsViewBtn = findViewById(R.id.statisticsViewBtn)
         statisticsViewBtn.setOnClickListener {
-            val openStatisticsActivity = Intent(this,StatisticsActivity::class.java)
+            val openStatisticsActivity = Intent(this, StatisticsActivity::class.java)
             startActivity(openStatisticsActivity)
         }
 

@@ -1,7 +1,6 @@
-package com.example.tamadoro
+package io.github.finnimo.tamadoro
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 
 class StatisticsActivity:AppCompatActivity(){
