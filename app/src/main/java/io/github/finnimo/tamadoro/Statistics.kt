@@ -5,31 +5,31 @@ class Statistics {
 
     private val totalSessions: MutableList<Session> = mutableListOf()
 
-    fun addSession(seconds: Int){
+    fun addSession(seconds: Int) {
         val session = Session(seconds)
         totalSessions.add(session)
     }
 
-    fun getSession(index:Int): Session?{
-        return if (index in totalSessions.indices){
+    fun getSession(index: Int): Session? {
+        return if (index in totalSessions.indices) {
             totalSessions[index]
-        } else{
+        } else {
             null
         }
     }
 
-    fun getTotalSessions():Int{
+    fun getTotalSessions(): Int {
         return totalSessions.size
     }
 
-    fun getTotalDuration(): Long{
-        return totalSessions.sumOf {it.seconds.toLong()}
+    fun getTotalDuration(): Long {
+        return totalSessions.sumOf { it.seconds.toLong() }
     }
 
-    fun getAverageDuration():Long{
-        return if (totalSessions.isNotEmpty()){
-            getTotalDuration()/totalSessions.size
-        } else{
+    fun getAverageDuration(): Long {
+        return if (totalSessions.isNotEmpty()) {
+            getTotalDuration() / totalSessions.size
+        } else {
             0
         }
     }
