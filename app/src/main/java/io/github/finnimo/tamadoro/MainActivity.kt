@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     private var timerRunning = false
 
     //private val initialTime = 25 * 60 * 1000L 25 mins
-    private val initialTime = 2 * 1000L//for test purposes
+    private val initialTime = 2 * 1000L//TODO: for test purposes
     private var timeRemaining: Long = 0
     private val statistics = Statistics()
 
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
                 timerTextView.text = "Finished!"
 
 
-                //ill add smth here to send notif when done
+                //TODO: ill add smth here to send notif when done
             }
         }.start()
 
