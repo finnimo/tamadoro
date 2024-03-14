@@ -1,4 +1,4 @@
-package com.example.tamadoro
+package io.github.finnimo.tamadoro
 
 import org.junit.Test
 
