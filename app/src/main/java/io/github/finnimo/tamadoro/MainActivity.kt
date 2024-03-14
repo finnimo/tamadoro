@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private var timerRunning = false
     //private val initialTime = 25 * 60 * 1000L 25 mins
-    private val initialTime = 3*1000L//for test purposes
+    private val initialTime = 2*1000L//for test purposes
     private var timeRemaining:Long = 0
     private val statistics = Statistics()
 
@@ -63,8 +63,8 @@ class MainActivity : AppCompatActivity() {
         timerTextView.text = formatTime(initialTime)
     }
 
-    private fun startTimer(time: Long){
-        timer = object : CountDownTimer(time,1000){
+    private fun startTimer(initialTime: Long){
+        timer = object : CountDownTimer(initialTime,1000){
             override fun onTick(millisUntilFinished: Long){
                 timeRemaining = millisUntilFinished
                 timerTextView.text = formatTime(millisUntilFinished)
@@ -73,12 +73,7 @@ class MainActivity : AppCompatActivity() {
             override fun onFinish(){ //WHEN TIMER ENDS
                 stopTimer()
                 timerTextView.text = "Finished!"
-                timeRemaining =  (initialTime + 1000L)
 
-
-                //val minutes = (initialTime/1000/60).toInt()
-                val minutes = ((time/1000)%60).toInt()
-                statistics.addSession(minutes)
 
 
                 //ill add smth here to send notif when done
@@ -103,6 +98,11 @@ class MainActivity : AppCompatActivity() {
         startButton.text = "Start"
         stopButton.visibility = Button.INVISIBLE
         timerRunning = false
+        timeRemaining = initialTime
+
+        //val minutes = (initialTime/1000/60).toInt()
+        val minutes = (initialTime/1000).toInt()
+        statistics.addSession(minutes)
     }
 
     private fun formatTime(millis:Long): String{
