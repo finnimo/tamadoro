@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
     private val statistics = Statistics()
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -73,11 +72,7 @@ class MainActivity : AppCompatActivity() {
             override fun onFinish(){ //WHEN TIMER ENDS
                 stopTimer()
                 timerTextView.text = "Finished!"
-                timeRemaining = initialTime
 
-                //val minutes = (initialTime/1000/60).toInt()
-                val minutes = ((initialTime/1000)%60).toInt()
-                statistics.addSession(minutes)
 
 
                 //ill add smth here to send notif when done
@@ -102,6 +97,11 @@ class MainActivity : AppCompatActivity() {
         startButton.text = "Start"
         stopButton.visibility = Button.INVISIBLE
         timerRunning = false
+        timeRemaining = initialTime
+
+        //val minutes = (initialTime/1000/60).toInt()
+        val minutes = (initialTime/1000).toInt()
+        statistics.addSession(minutes)
     }
 
     private fun formatTime(millis:Long): String{
