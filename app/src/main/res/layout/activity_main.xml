@@ -32,11 +32,11 @@
         app:layout_constraintTop_toBottomOf="@+id/timerTextView" />
 
     <Button
-        android:id="@+id/stopButton"
+        android:id="@+id/skipButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:text="Stop"
+        android:text="Skip"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/timerTextView"
@@ -72,5 +72,40 @@
         android:text="stats page"
         tools:layout_editor_absoluteX="-2dp"
         tools:layout_editor_absoluteY="0dp" />
+
+    <Button
+        android:id="@+id/deleteStats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DeleteStats"
+        app:layout_constraintBottom_toTopOf="@+id/timerTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.799" />
+
+    <Button
+        android:id="@+id/focusTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="focus Timer"
+        app:layout_constraintBottom_toTopOf="@+id/timerTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.248"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.962" />
+
+    <Button
+        android:id="@+id/breakTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Break Timer"
+        app:layout_constraintBottom_toTopOf="@+id/timerTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.421"
+        app:layout_constraintStart_toEndOf="@+id/focusTimer"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.962" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

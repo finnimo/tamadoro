@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "io.github.finnimo.tamadoro"
-        minSdk = 23
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -42,6 +42,11 @@ java {
 }
 
 dependencies {
+    //for local database
+    val room_version = "2.6.1"
+
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

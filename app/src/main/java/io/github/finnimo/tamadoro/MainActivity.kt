@@ -1,48 +1,100 @@
 package io.github.finnimo.tamadoro
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import androidx.appcompat.app.AppCompatActivity
+import android.util.Log //for debuggin purposes
+//imports for working with xml based ui
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 
+//imports for notifications
+
+
+
+import java.time.LocalDate
+import java.time.LocalDateTime
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var statistics: Statistics
     private lateinit var timerTextView: TextView
-    private lateinit var startButton: Button
-    private lateinit var stopButton: Button
+    private lateinit var startBtn: Button
+    private lateinit var skipButton: Button
     private lateinit var timer: CountDownTimer
-    private lateinit var totalDurationTextView: TextView
     private lateinit var showTotalDurationButton: Button
     private lateinit var statisticsViewBtn: Button
+    private lateinit var breakModeBtn: Button
+    private lateinit var focusModeBtn: Button
+
+    //buttons for debug
+    private lateinit var deleteStats: Button
+    private lateinit var totalDurationTextView: TextView
+
 
     private var timerRunning = false
 
     //private val initialTime = 25 * 60 * 1000L 25 mins
-    private val initialTime = 2 * 1000L//TODO: for test purposes
+    private var initialTime = 7 * 1000L //for test purposes
     private var timeRemaining: Long = 0
-    private val statistics = Statistics()
+    private var isPomodoro: Boolean =
+        true //boolean value to indicate whether a timer is in break or pomodoro mode
+    private val breakLength = 5 * 1000L
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //TODO: add notifications
+
+
+
+
+
+        statistics = Statistics(this)
+        //ui inits
         timerTextView = findViewById(R.id.timerTextView)
-        startButton = findViewById(R.id.startButton)
-        stopButton = findViewById(R.id.stopButton)
         timerTextView.text = formatTime(initialTime)
         totalDurationTextView = findViewById(R.id.totalDurationTextView)
+        // buttons
+        startBtn = findViewById(R.id.startButton)
+        skipButton = findViewById(R.id.skipButton)
         showTotalDurationButton = findViewById(R.id.showTotalDurationButton)
-
         statisticsViewBtn = findViewById(R.id.statisticsViewBtn)
+        breakModeBtn = findViewById(R.id.breakTimer)
+        focusModeBtn = findViewById(R.id.focusTimer)
+
+        deleteStats = findViewById(R.id.deleteStats)
+
+
+
         statisticsViewBtn.setOnClickListener {
             val openStatisticsActivity = Intent(this, StatisticsActivity::class.java)
             startActivity(openStatisticsActivity)
         }
 
-        startButton.setOnClickListener {//when start button clicked
+        deleteStats.setOnClickListener {
+            statistics.deleteStats()
+        }
+        breakModeBtn.setOnClickListener {
+            isPomodoro = false
+            timerTextView.text = formatTime(breakLength)
+            timeRemaining = breakLength
+        }
+
+        focusModeBtn.setOnClickListener {
+            isPomodoro = true
+            timerTextView.text = formatTime(initialTime)
+            timeRemaining = initialTime
+        }
+
+        startBtn.setOnClickListener {//when start button clicked
             if (timerRunning) {
                 pauseTimer()
             } else {
@@ -53,55 +105,96 @@ class MainActivity : AppCompatActivity() {
         showTotalDurationButton.setOnClickListener {
             val totalDuration = statistics.getTotalDuration()
             val totalSessions = statistics.getTotalSessions()
-            totalDurationTextView.text = "Total Duration: $totalDuration \nTotal sessions: $totalSessions"
+            totalDurationTextView.text =
+                "Total Duration: $totalDuration \nTotal sessions: $totalSessions"
+            statistics.getPeriod()
         }
 
-        stopButton.setOnClickListener {
-            stopTimer()
+        skipButton.setOnClickListener {
+            skipTimer()
+            if (isPomodoro == true){
+                timeRemaining = initialTime
+            } else{
+                timeRemaining = breakLength
+            }
+
         }
         timeRemaining = initialTime
         timerTextView.text = formatTime(initialTime)
     }
 
-    private fun startTimer(initialTime: Long) {
-        timer = object : CountDownTimer(initialTime, 1000) {
+    private fun startTimer(time: Long) {
+        timer = object : CountDownTimer(time, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 timeRemaining = millisUntilFinished
                 timerTextView.text = formatTime(millisUntilFinished)
             }
 
             override fun onFinish() { //WHEN TIMER ENDS
-                stopTimer()
+                val minutes = (initialTime / 1000).toInt()
+                if (isPomodoro == true) {
+                    statistics.addSession(minutes)
+                    statistics.setLastSessionDate(LocalDateTime.now())
+                    statistics.getLastSessionDate()
+                    stopTimer(initialTime)
+                    statistics.getPeriod()
+
+
+                } else {
+                    stopTimer(breakLength)
+                }
+
                 timerTextView.text = "Finished!"
 
-
-                //TODO: ill add smth here to send notif when done
+                // TODO: ill add smth here to send notif when done
             }
         }.start()
 
-        startButton.text = "Pause"
-        stopButton.visibility = Button.INVISIBLE
+        startBtn.text = "Pause"
+        skipButton.visibility = Button.INVISIBLE
         timerRunning = true
     }
 
     private fun pauseTimer() {
         timer.cancel()
-        startButton.text = "Resume"
-        stopButton.visibility = Button.VISIBLE
+        startBtn.text = "Resume"
+        skipButton.visibility = Button.VISIBLE
         timerRunning = false
     }
 
-    private fun stopTimer() {
+    private fun stopTimer(time: Long) {
         timer.cancel()
-        timerTextView.text = formatTime(initialTime)
-        startButton.text = "Start"
-        stopButton.visibility = Button.INVISIBLE
+        timerTextView.text = formatTime(time)
+        startBtn.text = "Start"
         timerRunning = false
-        timeRemaining = initialTime
+        timeRemaining = time
+
+        //val minutes = (initialTime/1000/60).toInt() this is to make it to minutes but i want to debug using seconds
+    }
+
+    private fun skipTimer() {
+        //to log time user has already focused for
+        //if its in focus mode then the skip will skip to break mode, vice versa
+        if (isPomodoro == true) {
+            val timeFocusedAlready = ((initialTime - timeRemaining + 1000) / 1000).toInt()
+            statistics.addSession(timeFocusedAlready)
+            statistics.setLastSessionDate(LocalDateTime.now())
+            timer.cancel()//cancels timer
+            timerTextView.text = formatTime(breakLength)//resets text view
+            isPomodoro = false
+
+        } else {
+            timer.cancel()
+            timerTextView.text = formatTime(initialTime)
+            isPomodoro = true
+        }
+        startBtn.text = "Start"
+        skipButton.visibility = Button.INVISIBLE
+        //resetting timer
+        timerRunning = false
+
 
         //val minutes = (initialTime/1000/60).toInt()
-        val minutes = (initialTime / 1000).toInt()
-        statistics.addSession(minutes)
     }
 
     private fun formatTime(millis: Long): String {
