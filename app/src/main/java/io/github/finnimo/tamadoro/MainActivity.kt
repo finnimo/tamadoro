@@ -22,29 +22,33 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var statistics: Statistics
-    private lateinit var timerTextView: TextView
-    private lateinit var startBtn: Button
-    private lateinit var skipButton: Button
+    // OBJECT DECLARATIONS
+
+    private lateinit var statistics:Statistics;
     private lateinit var timer: CountDownTimer
-    private lateinit var showTotalDurationButton: Button
-    private lateinit var statisticsViewBtn: Button
-    private lateinit var breakModeBtn: Button
-    private lateinit var focusModeBtn: Button
 
-    //buttons for debug
-    private lateinit var deleteStats: Button
-    private lateinit var totalDurationTextView: TextView
+    // TEXTVIEW DECLARATIONS
 
+    private lateinit var timerTextView: TextView ;
+    private lateinit var totalDurationTextView: TextView;
+
+    // BUTTON DECLARATIONS
+    private lateinit var startBtn: Button ;
+    private lateinit var skipButton: Button;
+    private lateinit var showTotalDurationButton:Button ;
+    private lateinit var statisticsViewBtn: Button ;
+    private lateinit var breakModeBtn: Button ;
+    private lateinit var focusModeBtn: Button ;
+    private lateinit var deleteStats: Button ;
+
+    // VARIABLE DEC & ASSIGNMENTS
 
     private var timerRunning = false
-
-    //private val initialTime = 25 * 60 * 1000L 25 mins
-    private var initialTime = 7 * 1000L //for test purposes
+    //private val initialTime = 25 * 60 * 1000L , this is used to change time to 25 mins, but currently im working with seconds for debugging purposes
+    private var initialTime = 7 * 1000L //for test purposes as stated above
     private var timeRemaining: Long = 0
-    private var isPomodoro: Boolean =
-        true //boolean value to indicate whether a timer is in break or pomodoro mode
-    private val breakLength = 5 * 1000L
+    private var isPomodoro: Boolean = true //boolean value to indicate whether a timer is in break or pomodoro mode
+    private var breakLength = 5 * 1000L
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,26 +57,24 @@ class MainActivity : AppCompatActivity() {
 
         //TODO: add notifications
 
+        statistics = Statistics(this);
 
 
+        // TEXTVIEWS
+        timerTextView = findViewById(R.id.timerTextView);
+        totalDurationTextView = findViewById(R.id.totalDurationTextView);
 
-
-        statistics = Statistics(this)
-        //ui inits
-        timerTextView = findViewById(R.id.timerTextView)
-        timerTextView.text = formatTime(initialTime)
-        totalDurationTextView = findViewById(R.id.totalDurationTextView)
-        // buttons
+        //INITIALIZING BUTTONS
         startBtn = findViewById(R.id.startButton)
         skipButton = findViewById(R.id.skipButton)
         showTotalDurationButton = findViewById(R.id.showTotalDurationButton)
         statisticsViewBtn = findViewById(R.id.statisticsViewBtn)
         breakModeBtn = findViewById(R.id.breakTimer)
         focusModeBtn = findViewById(R.id.focusTimer)
-
         deleteStats = findViewById(R.id.deleteStats)
 
-
+        //ui inits
+        timerTextView.text = formatTime(initialTime)
 
         statisticsViewBtn.setOnClickListener {
             val openStatisticsActivity = Intent(this, StatisticsActivity::class.java)

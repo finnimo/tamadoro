@@ -82,7 +82,11 @@ public class Statistics(private val context: Context) {
     fun getPeriod() {
         val period = Duration.between(this.lastSessionDate,LocalDateTime.now())
         Log.e("GET PERIOD",(period).toString())
+            ?: run {
+                Log.e("GET PERIOD", "No session date available")
+            }
     }
+
 
 
 }
