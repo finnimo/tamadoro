@@ -8,7 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import androidx.appcompat.app.AppCompatActivity
-import android.util.Log //for debuggin purposes
+import android.util.Log //for debugging purposes
 //imports for working with xml based ui
 import android.widget.Button
 import android.widget.TextView
@@ -24,22 +24,22 @@ class MainActivity : AppCompatActivity() {
 
     // OBJECT DECLARATIONS
 
-    private lateinit var statistics:Statistics;
+    private lateinit var statistics:Statistics
     private lateinit var timer: CountDownTimer
-
+//TODO: maybe try to declare variables straight away in OnCreate
     // TEXTVIEW DECLARATIONS
 
-    private lateinit var timerTextView: TextView ;
-    private lateinit var totalDurationTextView: TextView;
+    private lateinit var timerTextView: TextView
+    private lateinit var totalDurationTextView: TextView
 
     // BUTTON DECLARATIONS
-    private lateinit var startBtn: Button ;
-    private lateinit var skipButton: Button;
-    private lateinit var showTotalDurationButton:Button ;
-    private lateinit var statisticsViewBtn: Button ;
-    private lateinit var breakModeBtn: Button ;
-    private lateinit var focusModeBtn: Button ;
-    private lateinit var deleteStats: Button ;
+    private lateinit var startBtn: Button
+    private lateinit var skipButton: Button
+    private lateinit var showTotalDurationButton: Button
+    private lateinit var statisticsViewBtn: Button
+    private lateinit var breakModeBtn: Button
+    private lateinit var focusModeBtn: Button
+    private lateinit var deleteStats: Button
 
     // VARIABLE DEC & ASSIGNMENTS
 
@@ -57,12 +57,12 @@ class MainActivity : AppCompatActivity() {
 
         //TODO: add notifications
 
-        statistics = Statistics(this);
+        statistics = Statistics(this)
 
 
-        // TEXTVIEWS
-        timerTextView = findViewById(R.id.timerTextView);
-        totalDurationTextView = findViewById(R.id.totalDurationTextView);
+        // TEXT VIEWS
+        timerTextView = findViewById(R.id.timerTextView)
+        totalDurationTextView = findViewById(R.id.totalDurationTextView)
 
         //INITIALIZING BUTTONS
         startBtn = findViewById(R.id.startButton)
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         focusModeBtn = findViewById(R.id.focusTimer)
         deleteStats = findViewById(R.id.deleteStats)
 
-        //ui inits
+        //updating timer text view. by default, the timer will show 25:00 on launch.
         timerTextView.text = formatTime(initialTime)
 
         statisticsViewBtn.setOnClickListener {
@@ -110,14 +110,15 @@ class MainActivity : AppCompatActivity() {
             totalDurationTextView.text =
                 "Total Duration: $totalDuration \nTotal sessions: $totalSessions"
             statistics.getPeriod()
+            //note, program crashes if a session isn't logged before getPeriod is called
         }
 
         skipButton.setOnClickListener {
             skipTimer()
-            if (isPomodoro == true){
-                timeRemaining = initialTime
+            timeRemaining = if (isPomodoro){
+                initialTime
             } else{
-                timeRemaining = breakLength
+                breakLength
             }
 
         }
@@ -134,7 +135,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onFinish() { //WHEN TIMER ENDS
                 val minutes = (initialTime / 1000).toInt()
-                if (isPomodoro == true) {
+                if (isPomodoro) {
                     statistics.addSession(minutes)
                     statistics.setLastSessionDate(LocalDateTime.now())
                     statistics.getLastSessionDate()
@@ -148,7 +149,7 @@ class MainActivity : AppCompatActivity() {
 
                 timerTextView.text = "Finished!"
 
-                // TODO: ill add smth here to send notif when done
+                // TODO: ill add smth here to send a notif when done
             }
         }.start()
 
@@ -177,7 +178,7 @@ class MainActivity : AppCompatActivity() {
     private fun skipTimer() {
         //to log time user has already focused for
         //if its in focus mode then the skip will skip to break mode, vice versa
-        if (isPomodoro == true) {
+        if (isPomodoro) {
             val timeFocusedAlready = ((initialTime - timeRemaining + 1000) / 1000).toInt()
             statistics.addSession(timeFocusedAlready)
             statistics.setLastSessionDate(LocalDateTime.now())
