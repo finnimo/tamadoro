@@ -1,10 +1,5 @@
 package io.github.finnimo.tamadoro
-
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import androidx.appcompat.app.AppCompatActivity
@@ -12,19 +7,26 @@ import android.util.Log //for debugging purposes
 //imports for working with xml based ui
 import android.widget.Button
 import android.widget.TextView
-import androidx.core.app.NotificationCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.room.Room
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 //imports for notifications
 
 
-
-import java.time.LocalDate
 import java.time.LocalDateTime
 class MainActivity : AppCompatActivity() {
 
+    //ROOM RELATED STUFF
+
+    private lateinit var database: SessionsDatabase
+    private lateinit var sessionDao: SessionDao
+    private lateinit var addButton:Button
     // OBJECT DECLARATIONS
 
-    private lateinit var statistics:Statistics
+    private lateinit var statistics: Statistics
     private lateinit var timer: CountDownTimer
 //TODO: maybe try to declare variables straight away in OnCreate
     // TEXTVIEW DECLARATIONS
@@ -54,6 +56,51 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //ROOMS STUFF
+
+        addButton = findViewById(R.id.addButton)
+        database = Room.databaseBuilder(
+            applicationContext,
+            SessionsDatabase::class.java,
+            SessionsDatabase.NAME
+        ).build()
+
+        sessionDao = database.getSessionDao()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            sessionDao.getAllSessions()
+        }
+
+
+        // Handle the error appropriately
+
+
+
+
+
+
+        addButton.setOnClickListener {
+            GlobalScope.launch(Dispatchers.IO) {
+                val newSession = Session(
+                    seconds = 1800,
+                    dateTime = System.currentTimeMillis(),
+                    tag = "study"
+                )
+                sessionDao.addSession(newSession)
+                //sessionDao.deleteAllSessions()
+                Log.e("SESSION ADD?","YEZZ")
+            }
+        }
+
+
+
+
+
+
+
+
+//END OF ROOMS TEST
 
         //TODO: add notifications
 
@@ -125,6 +172,9 @@ class MainActivity : AppCompatActivity() {
         timeRemaining = initialTime
         timerTextView.text = formatTime(initialTime)
     }
+
+
+
 
     private fun startTimer(time: Long) {
         timer = object : CountDownTimer(time, 1000) {
