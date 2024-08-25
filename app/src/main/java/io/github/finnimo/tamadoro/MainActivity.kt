@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var database: SessionsDatabase
     private lateinit var sessionDao: SessionDao
     private lateinit var addButton:Button
+    private lateinit var manager: SessionManager
     // OBJECT DECLARATIONS
 
     private lateinit var statistics: Statistics
@@ -57,40 +58,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        addButton = findViewById(R.id.addButton)
         //ROOMS STUFF
 
-        addButton = findViewById(R.id.addButton)
-        database = Room.databaseBuilder(
-            applicationContext,
-            SessionsDatabase::class.java,
-            SessionsDatabase.NAME
-        ).build()
 
-        sessionDao = database.getSessionDao()
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            sessionDao.getAllSessions()
-        }
-
+        manager = SessionManager(this)
+        manager.getAllSessions()
 
         // Handle the error appropriately
 
 
-
-
-
-
         addButton.setOnClickListener {
-            GlobalScope.launch(Dispatchers.IO) {
-                val newSession = Session(
-                    seconds = 1800,
-                    dateTime = System.currentTimeMillis(),
-                    tag = "study"
-                )
-                sessionDao.addSession(newSession)
-                //sessionDao.deleteAllSessions()
-                Log.e("SESSION ADD?","YEZZ")
-            }
+            manager.addSession(1800,"study")
         }
 
 
