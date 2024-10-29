@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
 
         //HANDLING THEME BEFORE EVERYTHING IS RENDERED
         val sharedPrefs = getSharedPreferences("TAMADORO_THEME", MODE_PRIVATE)
-        val selectedTheme = sharedPrefs.getString("theme", "light") ?: "light"
+        val selectedTheme = sharedPrefs.getString("TAMADORO_THEME", "light") ?: "light"
 
         when (selectedTheme) {
             "dark" -> setTheme(R.style.darkTheme)

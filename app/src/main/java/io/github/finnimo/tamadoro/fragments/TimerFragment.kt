@@ -27,9 +27,11 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import io.github.finnimo.tamadoro.MainActivity
+import io.github.finnimo.tamadoro.Pet
 import io.github.finnimo.tamadoro.R
 import io.github.finnimo.tamadoro.SessionManager
 import io.github.finnimo.tamadoro.SettingsActivity
+import java.time.LocalDateTime
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,9 +40,8 @@ import io.github.finnimo.tamadoro.SettingsActivity
 class TimerFragment : Fragment() {
     // TODO: Rename and change types of parameters
 
-    // VARIABLES TO ACCESS ROOMS & DATABASE
+    // VARIABLES TO ACCESS ROOMS/DATABASE & COINS CLASS
     private lateinit var manager: SessionManager
-
     private var timer: CountDownTimer? = null
 
     // BUTTONS
@@ -92,20 +93,17 @@ class TimerFragment : Fragment() {
         manager = SessionManager(requireContext())
         manager.getAllSessions()
 
+        //Creating pet class for coin management & initiate pet interactions via timer
+
+        val Pet = Pet(requireContext())
+
         //For notifications
 
         createNotifChannel()
         checkNotificationPermission()
-        //val intent = Intent(requireContext(),MainActivity::class.java)
-        /*val pendingIntent = TaskStackBuilder.create(requireContext()).run {
-            addNextIntentWithParentStack(intent)
-            getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT)
-        }*/
-
-
-
 
         // TEXT VIEWS + EDIT TEXT
+
         timerTextView = view.findViewById(R.id.timerTextView)
         newTag = view.findViewById(R.id.newTag)
 
@@ -120,10 +118,13 @@ class TimerFragment : Fragment() {
         deleteStats = view.findViewById(R.id.deleteStats)
 
         //TAG
+
         tag = newTag?.text.toString()
 
         //Formats the timer to display the right count down starting number
         timerTextView?.text = formatTime(initialTime)
+
+        // The following code actively listens for change in editText component containing the session tag, whenever it changes, that's the tag that'll be appended to the session on timer finish
 
         newTag?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -139,6 +140,8 @@ class TimerFragment : Fragment() {
                 // Optional: Do something after the text has changed
             }
         })
+
+        // BUTTON CLICKED ACTIONS
 
         deleteStats?.setOnClickListener {
             manager.deleteAllSessions()
@@ -186,8 +189,6 @@ class TimerFragment : Fragment() {
         timeRemaining = initialTime
         timerTextView?.text = formatTime(initialTime)
 
-
-
     }
 
 
@@ -204,12 +205,10 @@ class TimerFragment : Fragment() {
 
             override fun onFinish() { //WHEN TIMER ENDS
                 val minutes = (initialTime / 1000).toInt()
+                //val minutes = (initialTime / 60000, above is for debug
                 if (isPomodoro) {
-                    manager.addSession(minutes,tag)
-                    //statistics.setLastSessionDate(LocalDateTime.now())
-                    //statistics.getLastSessionDate()
-                    stopTimer(initialTime)
-                    //statistics.getPeriod()
+                    logSession(minutes)
+
                 } else {
                     stopTimer(breakLength)
                 }
@@ -222,6 +221,12 @@ class TimerFragment : Fragment() {
         startBtn.text = "Pause"
         skipButton?.visibility = Button.INVISIBLE
         timerRunning = true
+    }
+
+    private fun logSession(minutes: Int) {
+        manager.addSession(minutes, tag)
+        Pet.addCoins(minutes)
+        stopTimer(initialTime)
     }
 
     private fun pauseTimer() {

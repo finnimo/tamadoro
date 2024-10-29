@@ -26,8 +26,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         darkButton.setOnClickListener {
-            editor.putString("TAMADORO_THEME","dark").apply()
-            themeRefresh()
+            applyTheme("dark")
         }
     }
 
@@ -37,8 +36,8 @@ class SettingsActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun applyTheme(themeName: String) {
-        editor.putString("TAMADORO_THEME",themeName).apply()
+    private fun applyTheme(themeName:String) {
+        editor.putString("TAMADORO_THEME", themeName).apply()
         themeRefresh()
     }
 
