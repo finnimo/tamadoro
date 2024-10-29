@@ -28,12 +28,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import io.github.finnimo.tamadoro.MainActivity
+import io.github.finnimo.tamadoro.activities.MainActivity
 import io.github.finnimo.tamadoro.Pet
 import io.github.finnimo.tamadoro.R
-import io.github.finnimo.tamadoro.SessionManager
-import io.github.finnimo.tamadoro.SettingsActivity
-import java.time.LocalDateTime
+import io.github.finnimo.tamadoro.Statistics
+import io.github.finnimo.tamadoro.sessiondatabase.SessionManager
+import io.github.finnimo.tamadoro.activities.SettingsActivity
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,6 +55,8 @@ class TimerFragment : Fragment() {
     private var newTag: EditText? = null
     private var deleteStats: Button? = null
     private var settingsBtn: Button? = null
+
+    private lateinit var button:Button
 
     // TEXTVIEW DECLARATIONS
 
@@ -95,10 +97,6 @@ class TimerFragment : Fragment() {
         manager = SessionManager(requireContext())
         manager.getAllSessions()
 
-        //Creating pet class for coin management & initiate pet interactions via timer
-
-        val Pet = Pet()
-
         //For notifications
 
         createNotifChannel()
@@ -118,6 +116,8 @@ class TimerFragment : Fragment() {
         breakModeBtn = view.findViewById(R.id.breakTimer)
         focusModeBtn = view.findViewById(R.id.focusTimer)
         deleteStats = view.findViewById(R.id.deleteStats)
+
+        button = view.findViewById(R.id.button)
 
         //TAG
 
@@ -188,6 +188,10 @@ class TimerFragment : Fragment() {
             startActivity(openSettingsActivity)
         }
 
+        button.setOnClickListener {
+            logSession(20)
+        }
+
         timeRemaining = initialTime
         timerTextView?.text = formatTime(initialTime)
 
@@ -209,7 +213,7 @@ class TimerFragment : Fragment() {
                 val minutes = (initialTime / 1000).toInt()
                 //val minutes = (initialTime / 60000, above is for debug
                 if (isPomodoro) {
-                    logSession(minutes)
+                    //logSession(minutes)
 
                 } else {
                     stopTimer(breakLength)
@@ -225,10 +229,14 @@ class TimerFragment : Fragment() {
         timerRunning = true
     }
 
-    private fun logSession(minutes: Int) {
+   private fun logSession(minutes: Int) {
         manager.addSession(minutes, tag)
         Pet.addCoins(requireContext(),minutes)
         stopTimer(initialTime)
+        Statistics.updateLastSessionDate(requireContext())
+        //Statistics.updateStreaks(requireContext())
+
+        //DEBUG STUFF:
         val x = Pet.getTotalCoins(requireContext())
         Log.d("coin amount", x.toString())
     }

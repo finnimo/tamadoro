@@ -1,9 +1,9 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.sessiondatabase
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import io.github.finnimo.tamadoro.Session
+import io.github.finnimo.tamadoro.sessiondatabase.Session
 
 //the dao is an interface that lets me manipulate data in my database
 @Dao

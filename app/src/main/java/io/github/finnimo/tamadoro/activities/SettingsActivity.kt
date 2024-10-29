@@ -1,11 +1,11 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.activities
 
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
+import io.github.finnimo.tamadoro.R
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences

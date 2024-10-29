@@ -1,8 +1,13 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.activities
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 //imports for working with xml based ui
 import androidx.fragment.app.Fragment
+import io.github.finnimo.tamadoro.PetFragment
+import io.github.finnimo.tamadoro.R
+import io.github.finnimo.tamadoro.StatsFragment
+import io.github.finnimo.tamadoro.TasksFragment
 import io.github.finnimo.tamadoro.databinding.ActivityMainBinding
 import io.github.finnimo.tamadoro.fragments.TimerFragment
 
@@ -13,6 +18,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        Log.d("logcat working","logcat is up and running")
 
         //HANDLING THEME BEFORE EVERYTHING IS RENDERED
         val sharedPrefs = getSharedPreferences("TAMADORO_THEME", MODE_PRIVATE)

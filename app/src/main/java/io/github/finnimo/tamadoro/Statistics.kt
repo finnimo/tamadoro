@@ -1,93 +1,65 @@
 package io.github.finnimo.tamadoro
-import android.content.Context//context lets me do stuff to sharedprefs
+
+import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.Period
-import java.util.*
 import java.time.temporal.ChronoUnit
 
-//shared prefs prevent statistics data from being lost when switching views
-public class Statistics(private val context: Context) {
+public class Statistics {
+    companion object {
 
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("userStats", Context.MODE_PRIVATE)
-    data class Session(val seconds: Int, val dateTime: Long)
-    //ATTRIBUTES:
-    private var allSessions: MutableList<Session> = mutableListOf()
-    private var currentStreak: Int = 0
-    lateinit private var lastSessionDate: LocalDateTime;
-
-    init {
-        // load saved stats from SharedPreferences when the class is initialized
-        allSessions = loadSavedStats()
-    }
-
-    private fun loadSavedStats(): MutableList<Session> {
-        val sessionsSet = sharedPreferences.getStringSet("userStats", mutableSetOf()) ?: mutableSetOf()
-        return sessionsSet.map { entry ->
-            val parts = entry.split(":")
-            Session(parts[0].toInt(), parts[1].toLong())
-        }.toMutableList()
-    }// TODO: update this to add dates
-
-    private fun saveStats() {
-        val sessionsSet = allSessions.map { "${it.seconds}:${it.dateTime}" }.toMutableSet()
-        sharedPreferences.edit().putStringSet("userStats", sessionsSet).apply()
-    }
-
-    fun addSession(seconds: Int) {
-        val session = Session(seconds, System.currentTimeMillis())
-        allSessions.add(session)
-        saveStats() // Save the updated totalSessions list
-    }
-
-
-
-    fun getAverageDuration(): Long {
-        return if (allSessions.isNotEmpty()) {
-            getTotalDuration() / allSessions.size
-        } else {
-            0
+        private fun getLastSessionDateSP(context: Context): SharedPreferences {
+            return context.getSharedPreferences("TAMADORO_LASTDATE", Context.MODE_PRIVATE)
         }
-    }
+        private fun getCurrentStreakSP(context: Context): SharedPreferences {
+            return context.getSharedPreferences("TAMADORO_CURRENTSTREAK", Context.MODE_PRIVATE)
+        }
+        private fun getHighestStreakSP(context: Context): SharedPreferences {
+            return context.getSharedPreferences("TAMADORO_HIGHESTSTREAK", Context.MODE_PRIVATE)
+        }
 
-    fun setLastSessionDate(newDate: LocalDateTime) {
-        this.lastSessionDate = newDate
-    }
+        fun updateLastSessionDate(context:  Context){
+            val sharedPref = getLastSessionDateSP(context)
+            val newDate = System.currentTimeMillis()
 
-    fun deleteStats(){
-    sharedPreferences.edit().clear().apply()
-        allSessions.clear()
-    }
+            // for debugging:
+            val x = sharedPref.getLong("TAMADORO_LASTDATE",0)
+            Log.d("first session date..","current session date:"+x.toString())
 
-    fun updateStreaks(){
-        var period = Duration.between(this.lastSessionDate,LocalDate.now());
-    }
-//methods for retrieving info
-    fun getTotalSessions(): Int {
-        return allSessions.size
-    }
+            sharedPref.edit().putLong("TAMADORO_LASTDATE", newDate).apply()
+            Log.d("session date..","newdate:"+newDate.toString())
+        }
 
-    fun getTotalDuration(): Long {
-        return allSessions.sumOf { it.seconds.toLong() }
-    }
+        fun updateStreaks(context: Context) {
+            val lastSessionSP = getLastSessionDateSP(context)
+            val currentStreakSP = getCurrentStreakSP(context)
+            val highestStreakSP = getHighestStreakSP(context)
+            var currentStreak = currentStreakSP.getInt("TAMADORO_CURRENTSTREAK",0)
+            val highestStreak = highestStreakSP.getInt("TAMADORO_HIGHESTSTREAK",0)
 
-    fun getLastSessionDate() {
-        Log.e("GET LAST SESSION DATE",(this.lastSessionDate).toString())
-    }
+            val lastSessionLong = lastSessionSP.getLong("TAMADORO_LASTDATE",0)
+            val lastSessionLocalDate = Instant.ofEpochMilli(lastSessionLong)
+            val daysApart = ChronoUnit.DAYS.between(lastSessionLocalDate, LocalDate.now())
 
-    fun getPeriod() {
-        val period = Duration.between(this.lastSessionDate,LocalDateTime.now())
-        Log.e("GET PERIOD",(period).toString())
-            ?: run {
-                Log.e("GET PERIOD", "No session date available")
+            if (highestStreak < currentStreak) {
+                highestStreakSP.edit().putInt("TAMADORO_HIGHESTSTREAK", currentStreak).apply()
             }
+
+            if (daysApart > 1) {
+                // Reset if its been more than 1 day
+                currentStreakSP.edit().putInt("TAMADORO_CURRENTSTREAK",0).apply()
+
+            } else {
+                // Add 1 to streak
+                currentStreak = currentStreakSP.getInt("TAMADORO_CURRENTSTREAK",0)
+                currentStreakSP.edit().putInt("TAMADORO_CURRENTSTREAK", currentStreak + 1).apply()
+            }
+            val x = currentStreakSP.getInt("TAMADORO_CURRENTSTREAK",0)
+
+            Log.d("current streak",x.toString())
+        }
+
     }
-
-
-
 }
-

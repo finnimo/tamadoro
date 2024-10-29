@@ -1,4 +1,4 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.sessiondatabase
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

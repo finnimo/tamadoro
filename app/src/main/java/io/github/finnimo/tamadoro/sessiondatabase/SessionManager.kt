@@ -1,4 +1,4 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.sessiondatabase
 
 import android.content.Context
 import android.util.Log
@@ -6,9 +6,6 @@ import androidx.room.Room
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 
 class SessionManager(context: Context) {
@@ -16,7 +13,7 @@ class SessionManager(context: Context) {
     private var database = Room.databaseBuilder(
     context.applicationContext,
     SessionsDatabase::class.java,
-    SessionsDatabase.NAME
+        SessionsDatabase.NAME
     ).build()
 
     private val sessionDao = database.getSessionDao()

@@ -1,9 +1,9 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.sessiondatabase
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import io.github.finnimo.tamadoro.Session
-import io.github.finnimo.tamadoro.SessionDao
+import io.github.finnimo.tamadoro.sessiondatabase.Session
+import io.github.finnimo.tamadoro.sessiondatabase.SessionDao
 
 
 /*This is the Room Database that manages and provides acces to the database and handles
