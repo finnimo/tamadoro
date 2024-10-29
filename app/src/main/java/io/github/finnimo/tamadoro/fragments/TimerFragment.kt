@@ -234,7 +234,7 @@ class TimerFragment : Fragment() {
         Pet.addCoins(requireContext(),minutes)
         stopTimer(initialTime)
         Statistics.updateLastSessionDate(requireContext())
-        //Statistics.updateStreaks(requireContext())
+        Statistics.updateStreaks(requireContext())
 
         //DEBUG STUFF:
         val x = Pet.getTotalCoins(requireContext())

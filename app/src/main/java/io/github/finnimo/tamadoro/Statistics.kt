@@ -2,9 +2,12 @@ package io.github.finnimo.tamadoro
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.service.autofill.Validators.or
 import android.util.Log
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 public class Statistics {
@@ -36,12 +39,13 @@ public class Statistics {
             val lastSessionSP = getLastSessionDateSP(context)
             val currentStreakSP = getCurrentStreakSP(context)
             val highestStreakSP = getHighestStreakSP(context)
-            var currentStreak = currentStreakSP.getInt("TAMADORO_CURRENTSTREAK",0)
+            val currentStreak = currentStreakSP.getInt("TAMADORO_CURRENTSTREAK",0)
             val highestStreak = highestStreakSP.getInt("TAMADORO_HIGHESTSTREAK",0)
 
             val lastSessionLong = lastSessionSP.getLong("TAMADORO_LASTDATE",0)
-            val lastSessionLocalDate = Instant.ofEpochMilli(lastSessionLong)
-            val daysApart = ChronoUnit.DAYS.between(lastSessionLocalDate, LocalDate.now())
+            val lastSessionLocalDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastSessionLong), ZoneId.systemDefault())
+            //Log.d("last session local date",lastSessionLocalDate.toString())
+            val daysApart = (ChronoUnit.DAYS.between(lastSessionLocalDate, LocalDateTime.now())).toInt()
 
             if (highestStreak < currentStreak) {
                 highestStreakSP.edit().putInt("TAMADORO_HIGHESTSTREAK", currentStreak).apply()
@@ -51,11 +55,11 @@ public class Statistics {
                 // Reset if its been more than 1 day
                 currentStreakSP.edit().putInt("TAMADORO_CURRENTSTREAK",0).apply()
 
-            } else {
-                // Add 1 to streak
-                currentStreak = currentStreakSP.getInt("TAMADORO_CURRENTSTREAK",0)
+            } else if ((daysApart == 1) or (currentStreak == 0) ) {
+                //if its been 1 day since last session:
                 currentStreakSP.edit().putInt("TAMADORO_CURRENTSTREAK", currentStreak + 1).apply()
             }
+
             val x = currentStreakSP.getInt("TAMADORO_CURRENTSTREAK",0)
 
             Log.d("current streak",x.toString())
