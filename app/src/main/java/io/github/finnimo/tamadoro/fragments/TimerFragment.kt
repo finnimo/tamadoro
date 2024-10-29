@@ -1,5 +1,6 @@
 package io.github.finnimo.tamadoro.fragments
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -23,6 +24,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -95,7 +97,7 @@ class TimerFragment : Fragment() {
 
         //Creating pet class for coin management & initiate pet interactions via timer
 
-        val Pet = Pet(requireContext())
+        val Pet = Pet()
 
         //For notifications
 
@@ -225,8 +227,10 @@ class TimerFragment : Fragment() {
 
     private fun logSession(minutes: Int) {
         manager.addSession(minutes, tag)
-        Pet.addCoins(minutes)
+        Pet.addCoins(requireContext(),minutes)
         stopTimer(initialTime)
+        val x = Pet.getTotalCoins(requireContext())
+        Log.d("coin amount", x.toString())
     }
 
     private fun pauseTimer() {
@@ -304,27 +308,21 @@ class TimerFragment : Fragment() {
                 .setVibrate(longArrayOf(1000))
 
             with(NotificationManagerCompat.from(requireContext())) {
-                notify(NOTIF_ID, builder.build())
-            }
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            NOTIF_PERMISSION_REQUEST_CODE -> {
-                /*if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // Permission granted, show the notification
-                    showNotification()
-                } else {
-                    // Permission denied, handle accordingly (e.g., show a message)
+                if (ActivityCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return
                 }
-                in the future ill add a window warning users that they wont get a notif when timer ends
-                */
+                notify(NOTIF_ID, builder.build())
             }
         }
     }

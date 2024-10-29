@@ -1,30 +1,30 @@
 package io.github.finnimo.tamadoro
 
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.core.content.ContentProviderCompat.requireContext
 
-public class Pet(val context: Context) {
-    private val sharedPreferences = context.getSharedPreferences("TAMADORO_COINS", Context.MODE_PRIVATE)
-    private val editor = sharedPreferences.edit()
-    private var coins = sharedPreferences.getInt("TAMADORO_COINS", 0) ?: 0
-
-    private fun addCoins(durationFocused: Int) {
-
-    }
-
-    private fun subCoins(noOfCoins: Int) {
-        coins -= noOfCoins
-        editor.putInt("TAMADORO_COINS",coins).apply()
-    }
-
-    private fun showCoins():Int {
-        return coins
-    }
+public class Pet() {
 
     companion object {
-        fun addCoins(durationFocused: Int) {
+
+        fun getSharedPrefEditor(context: Context): SharedPreferences{
+            return context.getSharedPreferences("TAMADORO_COINS", Context.MODE_PRIVATE)
+        }
+
+        fun addCoins(context: Context, durationFocused: Int) {
+            val sp = getSharedPrefEditor(context)
+            var coins = sp.getInt("TAMADORO_COINS", 0)
             val noOfCoins = 10 * durationFocused
             coins += noOfCoins
-            editor.putInt("TAMADORO_COINS",coins).apply()
+            sp.edit().putInt("TAMADORO_COINS",coins).apply()
+
+            //TODO: REMEMBER TO CHANGE COIN MULTIPLIER FOR ACTUAL APP
+        }
+
+        fun getTotalCoins(context: Context):Int {
+            val sp = getSharedPrefEditor(context)
+            return sp.getInt("TAMADORO_COINS", 0)
         }
     }
 }
