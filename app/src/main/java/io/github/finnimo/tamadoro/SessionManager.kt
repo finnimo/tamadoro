@@ -2,12 +2,14 @@ package io.github.finnimo.tamadoro
 
 import android.content.Context
 import android.util.Log
-import android.widget.Button
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.room.Room
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 
 class SessionManager(context: Context) {
 
@@ -33,8 +35,20 @@ class SessionManager(context: Context) {
                 tag = tag
             )
             sessionDao.addSession(newSession)
-            Log.e("SESSION ADD?", "YEZZ")
+            Log.e("SessionManager.addSession", "Session added on ${timestamp()}")
         }
     }
+
+    fun deleteAllSessions() {
+        GlobalScope.launch(Dispatchers.IO) {
+            sessionDao.deleteAllSessions()
+            Log.d("SessionManager.deleteAllSessions()", "All sessions deleted on ${timestamp()} ")
+        }
+    }
+
+    private fun timestamp(): String {
+        return System.currentTimeMillis().toString()
+    }
+
 
 }

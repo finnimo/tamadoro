@@ -1,14 +1,23 @@
 package io.github.finnimo.tamadoro
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log //for debugging purposes
+import android.util.TypedValue
 //imports for working with xml based ui
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
+import io.github.finnimo.tamadoro.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,6 +27,8 @@ import kotlinx.coroutines.launch
 
 import java.time.LocalDateTime
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
 
     //ROOM RELATED STUFF
 
@@ -33,16 +44,18 @@ class MainActivity : AppCompatActivity() {
     // TEXTVIEW DECLARATIONS
 
     private lateinit var timerTextView: TextView
-    private lateinit var totalDurationTextView: TextView
 
     // BUTTON DECLARATIONS
     private lateinit var startBtn: Button
     private lateinit var skipButton: Button
-    private lateinit var showTotalDurationButton: Button
     private lateinit var statisticsViewBtn: Button
     private lateinit var breakModeBtn: Button
     private lateinit var focusModeBtn: Button
+    private lateinit var newTag: EditText
     private lateinit var deleteStats: Button
+    private lateinit var settingsBtn: Button
+
+    private lateinit var tag: String
 
     // VARIABLE DEC & ASSIGNMENTS
 
@@ -55,12 +68,52 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        //HANDLING THEME BEFORE EVERYTHING IS RENDERED
+        val sharedPrefs = getSharedPreferences("Theme", MODE_PRIVATE)
+        val selectedTheme = sharedPrefs.getString("theme", "light") ?: "light"
+
+        when (selectedTheme) {
+            "dark" -> setTheme(R.style.darkTheme)
+            //"x" -> setTheme(R.style.x)  // Add additional themes as needed
+            else -> setTheme(R.style.lightTheme) // Default to light
+        }
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        //setContentView(R.layout.activity_main)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        loadFragment(TimerFragment())
+
+        binding.bottomNavigationView.setOnItemSelectedListener {item ->
+            when (item.itemId) {
+                R.id.timerNav -> {
+                    loadFragment(TimerFragment())
+                    true
+                }
+                R.id.tasksNav -> {
+                    loadFragment(TasksFragment())
+                    true
+                }
+                R.id.petNav -> {
+                    loadFragment(PetFragment())
+                    true
+                }
+
+                R.id.statsNav -> {
+                    loadFragment(StatsFragment())
+                    true
+                }
+                else -> false
+            }
+        }
+
 
         addButton = findViewById(R.id.addButton)
-        //ROOMS STUFF
 
+        // THEMES RELATED THINGS
+
+        //ROOMS STUFF
 
         manager = SessionManager(this)
         manager.getAllSessions()
@@ -73,53 +126,75 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
-
-
-
-
-
-//END OF ROOMS TEST
-
         //TODO: add notifications
 
-        statistics = Statistics(this)
+        //statistics = Statistics(this)
+        //^ that was the old way i implemented stats
 
 
-        // TEXT VIEWS
+
+        // TEXT VIEWS + EDIT TEXT
         timerTextView = findViewById(R.id.timerTextView)
-        totalDurationTextView = findViewById(R.id.totalDurationTextView)
+        newTag = findViewById(R.id.newTag)
 
-        //INITIALIZING BUTTONS
+        // BUTTONS
         startBtn = findViewById(R.id.startButton)
         skipButton = findViewById(R.id.skipButton)
-        showTotalDurationButton = findViewById(R.id.showTotalDurationButton)
         statisticsViewBtn = findViewById(R.id.statisticsViewBtn)
+        settingsBtn = findViewById(R.id.settingsBtn)
+
         breakModeBtn = findViewById(R.id.breakTimer)
         focusModeBtn = findViewById(R.id.focusTimer)
+
         deleteStats = findViewById(R.id.deleteStats)
+
+
+        //TAG
+        tag = newTag.getText().toString()
 
         //updating timer text view. by default, the timer will show 25:00 on launch.
         timerTextView.text = formatTime(initialTime)
+
+        newTag.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Optional: Do something before text changes
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // This is called as the text is changing
+                tag = (s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Optional: Do something after the text has changed
+            }
+        })
 
         statisticsViewBtn.setOnClickListener {
             val openStatisticsActivity = Intent(this, StatisticsActivity::class.java)
             startActivity(openStatisticsActivity)
         }
 
+        settingsBtn.setOnClickListener {
+            val openSettingsActivity = Intent(this, SettingsActivity::class.java)
+            startActivity(openSettingsActivity)
+        }
+
         deleteStats.setOnClickListener {
-            statistics.deleteStats()
+            manager.deleteAllSessions()
         }
         breakModeBtn.setOnClickListener {
             isPomodoro = false
             timerTextView.text = formatTime(breakLength)
             timeRemaining = breakLength
+            updateButtonAppearance()
         }
 
         focusModeBtn.setOnClickListener {
             isPomodoro = true
             timerTextView.text = formatTime(initialTime)
             timeRemaining = initialTime
+            updateButtonAppearance()
         }
 
         startBtn.setOnClickListener {//when start button clicked
@@ -130,14 +205,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        showTotalDurationButton.setOnClickListener {
-            val totalDuration = statistics.getTotalDuration()
-            val totalSessions = statistics.getTotalSessions()
-            totalDurationTextView.text =
-                "Total Duration: $totalDuration \nTotal sessions: $totalSessions"
-            statistics.getPeriod()
-            //note, program crashes if a session isn't logged before getPeriod is called
-        }
 
         skipButton.setOnClickListener {
             skipTimer()
@@ -152,7 +219,37 @@ class MainActivity : AppCompatActivity() {
         timerTextView.text = formatTime(initialTime)
     }
 
+    private fun loadFragment(fragment: Fragment){
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frameLayout, fragment) // Replace with your fragment container's ID
+        transaction.commit()
 
+    }
+
+    private fun getColour(attr: Int): Int {
+        val typedValue = TypedValue()
+        theme.resolveAttribute(attr, typedValue, true)
+        return typedValue.data
+    }
+
+
+    private fun updateButtonAppearance() {
+
+        val primary = getColour(androidx.constraintlayout.widget.R.attr.colorPrimary)
+        val secondary = getColour(com.google.android.material.R.attr.colorSecondary)
+
+
+        if (isPomodoro) {
+            focusModeBtn.backgroundTintList = ColorStateList.valueOf(secondary)
+            breakModeBtn.backgroundTintList = ColorStateList.valueOf(primary)
+        } else {
+            breakModeBtn.backgroundTintList = ColorStateList.valueOf(secondary)
+            focusModeBtn.backgroundTintList = ColorStateList.valueOf(primary)
+        }
+
+
+
+    }
 
 
     private fun startTimer(time: Long) {
@@ -165,12 +262,11 @@ class MainActivity : AppCompatActivity() {
             override fun onFinish() { //WHEN TIMER ENDS
                 val minutes = (initialTime / 1000).toInt()
                 if (isPomodoro) {
-                    statistics.addSession(minutes)
+                    manager.addSession(minutes,tag)
                     statistics.setLastSessionDate(LocalDateTime.now())
                     statistics.getLastSessionDate()
                     stopTimer(initialTime)
                     statistics.getPeriod()
-
 
                 } else {
                     stopTimer(breakLength)
@@ -209,7 +305,7 @@ class MainActivity : AppCompatActivity() {
         //if its in focus mode then the skip will skip to break mode, vice versa
         if (isPomodoro) {
             val timeFocusedAlready = ((initialTime - timeRemaining + 1000) / 1000).toInt()
-            statistics.addSession(timeFocusedAlready)
+            manager.addSession(timeFocusedAlready,tag)
             statistics.setLastSessionDate(LocalDateTime.now())
             timer.cancel()//cancels timer
             timerTextView.text = formatTime(breakLength)//resets text view
@@ -220,6 +316,7 @@ class MainActivity : AppCompatActivity() {
             timerTextView.text = formatTime(initialTime)
             isPomodoro = true
         }
+        updateButtonAppearance()
         startBtn.text = "Start"
         skipButton.visibility = Button.INVISIBLE
         //resetting timer
