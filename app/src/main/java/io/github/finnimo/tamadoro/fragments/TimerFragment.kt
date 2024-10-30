@@ -70,7 +70,7 @@ class TimerFragment : Fragment() {
 
     private var timerRunning = false
     //private val initialTime = 25 * 60 * 1000L , this is used to change time to 25 mins, but currently im working with seconds for debugging purposes
-    private var initialTime = 7 * 1000L //for test purposes as stated above
+    private var initialTime = 2 * 1000L //for test purposes as stated above
     private var timeRemaining: Long = 0
     private var isPomodoro: Boolean = true //boolean value to indicate whether a timer is in break or pomodoro mode
     private var breakLength = 5 * 1000L
@@ -84,8 +84,6 @@ class TimerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
         return inflater.inflate(R.layout.fragment_timer, container, false)
     }
 
@@ -219,7 +217,7 @@ class TimerFragment : Fragment() {
                     stopTimer(breakLength)
                 }
                 showNotification()
-                timerTextView?.text = "Finished!"
+                logSession(minutes)
 
             }
         }.start()
@@ -233,6 +231,7 @@ class TimerFragment : Fragment() {
         manager.addSession(minutes, tag)
         Pet.addCoins(requireContext(),minutes)
         stopTimer(initialTime)
+        timerTextView?.text = "Finished!"
         Statistics.updateLastSessionDate(requireContext())
         Statistics.updateStreaks(requireContext())
 

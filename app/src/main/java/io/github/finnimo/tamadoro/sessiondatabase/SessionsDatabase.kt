@@ -23,4 +23,5 @@ abstract class SessionsDatabase : RoomDatabase() {
     companion object {
         const val NAME = "Sessions_DB"
     }
+
 }

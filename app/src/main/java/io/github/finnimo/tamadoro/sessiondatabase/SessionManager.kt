@@ -6,6 +6,10 @@ import androidx.room.Room
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.ZoneId
 
 
 class SessionManager(context: Context) {
@@ -17,6 +21,10 @@ class SessionManager(context: Context) {
     ).build()
 
     private val sessionDao = database.getSessionDao()
+
+    private fun timestamp(): String {
+        return System.currentTimeMillis().toString()
+    }
 
     fun getAllSessions(){
         GlobalScope.launch(Dispatchers.IO) {
@@ -43,9 +51,18 @@ class SessionManager(context: Context) {
         }
     }
 
-    private fun timestamp(): String {
-        return System.currentTimeMillis().toString()
+    fun getTotalDuration(): Int {
+        return sessionDao.getTotalDuration()
     }
+
+    fun getTotalDurationThisWeek(): Int {
+        //val currentTime = System.currentTimeMillis()
+        val today = LocalDate.now()
+        val startOfWeek = (today.with(DayOfWeek.MONDAY)).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        return sessionDao.getTotalDurationThisWeek(startOfWeek,System.currentTimeMillis())
+    }
+
+
 
 
 }

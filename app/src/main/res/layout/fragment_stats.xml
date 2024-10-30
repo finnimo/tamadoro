@@ -1,15 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".StatsFragment">
 
     <!-- TODO: Update blank fragment layout -->
+
     <TextView
+        android:id="@+id/currentStreakTextView"
+        android:layout_width="123dp"
+        android:layout_height="153dp"
+        android:text="current streak"
+        android:textSize="30dp"
+        app:layout_constraintStart_toEndOf="@+id/highestStreakTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/highestStreakTextView"
+        android:layout_width="105dp"
+        android:layout_height="151dp"
+        android:text="highest streak"
+        android:textSize="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/totalDurationTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="STATS FRAG"
-        android:textSize="30dp"/>
+        android:text="all time"
+        android:textSize="30dp"
+        app:layout_constraintStart_toEndOf="@+id/currentStreakTextView"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/totalDurationThisWeekTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="this week"
+        app:layout_constraintStart_toEndOf="@+id/totalDurationTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
