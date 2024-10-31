@@ -12,19 +12,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.ZoneId
 
-/**
- * A simple [Fragment] subclass.
- * Use the [StatsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class StatsFragment : Fragment() {
 
     private lateinit var manager: SessionManager
     private lateinit var highestStreakTV: TextView
     private lateinit var currentStreakTV: TextView
     private lateinit var totalDurationTV: TextView
+    private lateinit var totalDurationTodayTV: TextView
     private lateinit var totalDurationThisWeekTV: TextView
+    private lateinit var averageSessionDurationTV: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,39 +36,56 @@ class StatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         manager = SessionManager(requireContext())
-        manager.getAllSessions()
+        GlobalScope.launch(Dispatchers.Main) {
+            val sessions = manager.getAllSessions()
+            val size = sessions.size
+            //val sessionDuration = manager.getTotalDuration()
+           // averageSessionDurationTV.text = (sessionDuration/size).toString()
+
+        }
 
         //initializing text views
 
         highestStreakTV = view.findViewById(R.id.highestStreakTextView)
         currentStreakTV = view.findViewById(R.id.currentStreakTextView)
         totalDurationTV = view.findViewById(R.id.totalDurationTextView)
+        totalDurationTodayTV = view.findViewById(R.id.totalDurationTodayTextView)
         totalDurationThisWeekTV = view.findViewById(R.id.totalDurationThisWeekTextView)
+        averageSessionDurationTV = view.findViewById(R.id.averageSessionDuration)
 
         viewLifecycleOwner.lifecycleScope.launch {
             val totalDuration = withContext(Dispatchers.IO) {
                 manager.getTotalDuration()
             }
 
-            val totalDurationThisWeek = withContext(Dispatchers.IO) {
-                manager.getTotalDurationThisWeek()
+            val totalDurationToday = withContext(Dispatchers.IO) {
+                val startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                manager.getTotalDurationThisWeek(startOfDay)
             }
+
+            val totalDurationThisWeek = withContext(Dispatchers.IO) {
+                val startOfWeek = (LocalDate.now().with(DayOfWeek.MONDAY)).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                manager.getTotalDurationThisWeek(startOfWeek)
+            }
+
             totalDurationTV.text = totalDuration.toString()
+            totalDurationTodayTV.text = totalDurationToday.toString()
             totalDurationThisWeekTV.text = totalDurationThisWeek.toString()
         }
 
         val highestStreak = Statistics.getHighestStreak(requireContext())
         highestStreakTV.text = highestStreak.toString()
 
-        val currentStreak = Statistics.getCurrentStreak(requireContext())
+        val currentStreak = Statistics.streakCheckOnViewCreated(requireContext())
         currentStreakTV.text = currentStreak.toString()
 
 
 
+
     }
+
+
 
 
 

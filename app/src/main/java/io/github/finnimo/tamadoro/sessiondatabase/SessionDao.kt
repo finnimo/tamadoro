@@ -3,7 +3,6 @@ package io.github.finnimo.tamadoro.sessiondatabase
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import io.github.finnimo.tamadoro.sessiondatabase.Session
 
 //the dao is an interface that lets me manipulate data in my database
 @Dao
@@ -25,7 +24,7 @@ public interface SessionDao {
     fun getTotalDuration(): Int
     //get duration from today
     @Query("SELECT SUM(seconds) FROM Session WHERE ((dateTime >= :startDate) and (dateTime <= :endDate))")
-    fun getTotalDurationThisWeek(startDate: Long, endDate: Long): Int
+    fun getTotalDurationInPeriod(startDate: Long, endDate: Long): Int
 
     //currently working in seconds, make sure it wokrs in minutes
 

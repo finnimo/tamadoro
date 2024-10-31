@@ -26,8 +26,8 @@ class SessionManager(context: Context) {
         return System.currentTimeMillis().toString()
     }
 
-    fun getAllSessions(){
-        GlobalScope.launch(Dispatchers.IO) {
+    suspend fun getAllSessions(): List<Session> {
+        return withContext(Dispatchers.IO) {
             sessionDao.getAllSessions()
         }
     }
@@ -55,11 +55,9 @@ class SessionManager(context: Context) {
         return sessionDao.getTotalDuration()
     }
 
-    fun getTotalDurationThisWeek(): Int {
+    fun getTotalDurationThisWeek(start: Long): Int {
         //val currentTime = System.currentTimeMillis()
-        val today = LocalDate.now()
-        val startOfWeek = (today.with(DayOfWeek.MONDAY)).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        return sessionDao.getTotalDurationThisWeek(startOfWeek,System.currentTimeMillis())
+        return sessionDao.getTotalDurationInPeriod(start,System.currentTimeMillis())
     }
 
 

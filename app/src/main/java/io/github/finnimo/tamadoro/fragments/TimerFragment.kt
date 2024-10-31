@@ -34,6 +34,9 @@ import io.github.finnimo.tamadoro.R
 import io.github.finnimo.tamadoro.Statistics
 import io.github.finnimo.tamadoro.sessiondatabase.SessionManager
 import io.github.finnimo.tamadoro.activities.SettingsActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -93,7 +96,10 @@ class TimerFragment : Fragment() {
         //Initializing database and grabbing sessions first so that I don't accidentally access database before it's initialized, avoiding this crash
 
         manager = SessionManager(requireContext())
-        manager.getAllSessions()
+        GlobalScope.launch(Dispatchers.Main) {
+
+            manager.getAllSessions()
+        }
 
         //For notifications
 
@@ -232,8 +238,9 @@ class TimerFragment : Fragment() {
         Pet.addCoins(requireContext(),minutes)
         stopTimer(initialTime)
         timerTextView?.text = "Finished!"
-        Statistics.updateLastSessionDate(requireContext())
         Statistics.updateStreaks(requireContext())
+        Statistics.updateLastSessionDate(requireContext())
+
 
         //DEBUG STUFF:
         val x = Pet.getTotalCoins(requireContext())
@@ -273,7 +280,7 @@ class TimerFragment : Fragment() {
             timerTextView?.text = formatTime(initialTime)
             isPomodoro = true
         }
-        updateButtonAppearance()
+        updateButtonAppearance( )
         startBtn.text = "Start"
         skipButton?.visibility = Button.INVISIBLE
 
