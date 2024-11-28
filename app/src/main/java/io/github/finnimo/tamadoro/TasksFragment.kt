@@ -31,9 +31,9 @@ class TasksFragment : Fragment() {
         taskName = view.findViewById(R.id.taskNameTemp)
         taskDesc = view.findViewById(R.id.taskDescTemp)
         newTaskBtn = view.findViewById(R.id.newTaskBtn)
-        taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
+        taskViewModel = ViewModelProvider(requireActivity()).get(TaskViewModel::class.java)
         newTaskBtn.setOnClickListener {
-            NewTaskSheet().show(childFragmentManager, "newTaskTag")
+            NewTaskSheet().show(childFragmentManager, "newTask")
         }
 
         taskViewModel.name.observe(viewLifecycleOwner) {
