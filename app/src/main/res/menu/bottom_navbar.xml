@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Timer"
+    <item
         android:icon="@drawable/ic_timer"
         android:id="@+id/timerNav"
         />
-    <item android:title="Tasks"
+    <item
         android:icon="@drawable/ic_tasks"
         android:id="@+id/tasksNav"/>
-    <item android:title="Pet"
+    <item
         android:icon="@drawable/ic_pet"
         android:id="@+id/petNav"/>
-    <item android:title="Stats"
+    <item
         android:icon="@drawable/ic_stats"
         android:id="@+id/statsNav"/>
 </menu>

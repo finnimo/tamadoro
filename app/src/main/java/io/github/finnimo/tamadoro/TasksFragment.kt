@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -15,9 +17,9 @@ import androidx.lifecycle.ViewModelProvider
 class TasksFragment : Fragment() {
 
     private lateinit var taskViewModel: TaskViewModel
-    private lateinit var taskName: TextView
-    private lateinit var taskDesc: TextView
     private lateinit var newTaskBtn: Button
+    private lateinit var recyclerView: RecyclerView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -28,23 +30,25 @@ class TasksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        taskName = view.findViewById(R.id.taskNameTemp)
-        taskDesc = view.findViewById(R.id.taskDescTemp)
+        recyclerView = view.findViewById(R.id.todoListRecyclerView)
         newTaskBtn = view.findViewById(R.id.newTaskBtn)
         taskViewModel = ViewModelProvider(requireActivity()).get(TaskViewModel::class.java)
+
+
         newTaskBtn.setOnClickListener {
-            NewTaskSheet().show(childFragmentManager, "newTask")
-        }
-
-        taskViewModel.name.observe(viewLifecycleOwner) {
-            taskName.text = String.format("Task Name: %s", it)
-        }
-
-        taskViewModel.desc.observe(viewLifecycleOwner) {
-            taskDesc.text = String.format("Task Desc: %s", it)
+            NewTaskSheet(null).show(childFragmentManager, "newTask")
+            setRecyclerView()
         }
 
     }
 
+    private fun setRecyclerView() {
+        taskViewModel.taskItems.observe(viewLifecycleOwner) {
+            recyclerView.apply {
+                layoutManager = LinearLayoutManager(requireContext())
+                adapter = TaskItemAdapter(it)
+            }
+        }
+    }
 
 }
