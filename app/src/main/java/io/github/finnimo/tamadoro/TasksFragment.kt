@@ -32,7 +32,7 @@ class TasksFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setRecyclerView()
         recyclerView = view.findViewById(R.id.todoListRecyclerView)
         newTaskBtn = view.findViewById(R.id.newTaskBtn)
 
