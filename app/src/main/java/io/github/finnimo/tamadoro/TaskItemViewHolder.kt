@@ -21,8 +21,8 @@ class TaskItemViewHolder(
     fun bindTaskItem(taskItem: TaskItem) {
         taskName.text = taskItem.name
 
-        if (taskItem.dueDate != null) {
-            taskDueDate.text = taskItem.dueDate?.format(DateTimeFormatter.ofPattern("dd/MM"))
+        if (taskItem.dueDate() != null) {
+            taskDueDate.text = taskItem.dueDate()?.format(DateTimeFormatter.ofPattern("dd/MM"))
         } else {
             taskDueDate.text = ""
         }

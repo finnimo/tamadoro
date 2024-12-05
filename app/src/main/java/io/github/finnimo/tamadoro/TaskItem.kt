@@ -1,16 +1,25 @@
 package io.github.finnimo.tamadoro
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
+@Entity
 class TaskItem(
     var name: String,
-    var dueDate: LocalDate?,
-    var completed:Boolean = false,
-    var taskID: UUID = UUID.randomUUID()
+    var  dueDateString: String?,
+    var completed: Boolean = false,
+    @PrimaryKey(autoGenerate = true) var taskID: Int = 0
     )
 {
 
+fun dueDate(): LocalDate? = if (dueDateString == null) null
+    else LocalDate.parse(dueDateString, dateFormatter)
 
+    companion object {
+        val dateFormatter: DateTimeFormatter = DateTimeFormatter.ISO_DATE
+    }
 
 }

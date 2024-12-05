@@ -35,7 +35,13 @@ class NewTaskSheet(var taskItem: TaskItem?): BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        taskViewModel = ViewModelProvider(requireActivity()).get(TaskViewModel::class.java)
+        taskViewModel = ViewModelProvider(
+            requireActivity(),
+            TaskItemModelFactory((requireActivity().application as TodoApplication).repository)
+        ).get(TaskViewModel::class.java)
+
+        //TODO: app is crashing on trying to initialize taskVoiewModel
+
         saveBtn = view.findViewById(R.id.saveBtn)
         taskNameInput = view.findViewById(R.id.name)
         taskSheetTitle = view.findViewById(R.id.taskSheetTitle)
@@ -47,8 +53,8 @@ class NewTaskSheet(var taskItem: TaskItem?): BottomSheetDialogFragment() {
             val editable = Editable.Factory.getInstance()
             taskNameInput.text = editable.newEditable(taskItem!!.name)
 
-            if (taskItem!!.dueDate != null) {
-                dueDate = taskItem!!.dueDate
+            if (taskItem!!.dueDate() != null) {
+                dueDate = taskItem!!.dueDate()
             }
 
         } else {
@@ -58,9 +64,9 @@ class NewTaskSheet(var taskItem: TaskItem?): BottomSheetDialogFragment() {
 
         val datePicker: MaterialDatePicker<Long>
 
-        if ((taskItem != null) and (taskItem?.dueDate != null)) {
+        if ((taskItem != null) and (taskItem?.dueDate() != null)) {
             val zoneID: ZoneId = ZoneId.systemDefault()
-            val prevDueDate = taskItem!!.dueDate!!.atStartOfDay(zoneID).toInstant().toEpochMilli()
+            val prevDueDate = taskItem!!.dueDate()!!.atStartOfDay(zoneID).toInstant().toEpochMilli()
             datePicker =
                 MaterialDatePicker.Builder.datePicker()
                     .setTitleText("Select date")
@@ -102,14 +108,18 @@ class NewTaskSheet(var taskItem: TaskItem?): BottomSheetDialogFragment() {
     }
 
     private fun saveAction() {
-        val name = taskNameInput.text.toString()
+     val name = taskNameInput.text.toString()
+        val dueDateString = if (dueDate == null) null
+        else TaskItem.dateFormatter.format(dueDate)
+
         if (taskItem == null) {
-            val newTask = TaskItem(name, dueDate)
+            val newTask = TaskItem(name, dueDateString)
             taskViewModel.addTaskItem(newTask)
         } else {
-            taskViewModel.updateTaskItem(taskItem!!.taskID, name, dueDate)
+            taskItem!!.name = name
+            taskItem!!.dueDateString = dueDateString
+            taskViewModel.updateTaskItem(taskItem!!)
         }
-
 
 
         dismiss()

@@ -29,7 +29,7 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true;
+        viewBinding = true
     }
 
     compileOptions {
@@ -47,13 +47,26 @@ java {
     }
 }
 
+kapt {
+  correctErrorTypes = true
+}
+
 dependencies {
     //for local database
     val room_version = "2.6.1"
 
     implementation("androidx.room:room-runtime:$room_version")
-    //annotationProcessor("androidx.room:room-compiler:$room_version") //for java
-    kapt("androidx.room:room-compiler:2.5.0") // For Kotlin
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+
+    implementation("androidx.activity:activity-ktx:1.9.3") // For activity-scoped ViewModels
+    implementation("androidx.fragment:fragment-ktx:1.8.5") // For fragment-scoped ViewModels
+
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

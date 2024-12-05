@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +17,9 @@ import androidx.recyclerview.widget.RecyclerView
 
 class TasksFragment : Fragment() {
 
-    private lateinit var taskViewModel: TaskViewModel
+    private val taskViewModel: TaskViewModel by viewModels {
+        TaskItemModelFactory((requireActivity().application as TodoApplication).repository)
+    }
     private lateinit var newTaskBtn: Button
     private lateinit var recyclerView: RecyclerView
 
@@ -32,7 +35,7 @@ class TasksFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.todoListRecyclerView)
         newTaskBtn = view.findViewById(R.id.newTaskBtn)
-        taskViewModel = ViewModelProvider(requireActivity()).get(TaskViewModel::class.java)
+
 
 
         newTaskBtn.setOnClickListener {
