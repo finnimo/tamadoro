@@ -1,14 +1,10 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.taskitemdatabase
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import java.time.LocalDate
-import java.util.UUID
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
@@ -24,8 +20,12 @@ class TaskViewModel(private val repository: TaskItemRepository): ViewModel() {
         repository.updateTaskItem(taskItem)
     }
 
-    fun toggleCompleted(taskItem: TaskItem) = viewModelScope.launch {
-        taskItem.completed = !taskItem.completed
+    fun deleteTaskItem(taskItem: TaskItem) = viewModelScope.launch {
+        repository.deleteTaskItem(taskItem)
+    }
+
+    fun deleteCompletedtasks() = viewModelScope.launch {
+        repository.deleteCompletedTasks()
     }
 
 }

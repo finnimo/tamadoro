@@ -1,35 +1,31 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.fragments
 
 import android.os.Bundle
-import android.service.autofill.Validators.and
-import android.text.Editable
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
+import io.github.finnimo.tamadoro.R
+import io.github.finnimo.tamadoro.taskitemdatabase.TaskItem
+import io.github.finnimo.tamadoro.taskitemdatabase.TaskItemModelFactory
+import io.github.finnimo.tamadoro.taskitemdatabase.TaskViewModel
+import io.github.finnimo.tamadoro.taskitemdatabase.TodoApplication
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-import java.util.TimeZone
-import java.util.UUID
 
 class NewTaskSheet(var taskItem: TaskItem?): BottomSheetDialogFragment() {
 
     private lateinit var taskViewModel: TaskViewModel
-    private lateinit var saveBtn: Button
     private lateinit var taskNameInput: EditText
-    private lateinit var taskSheetTitle: TextView
+    private lateinit var tagInput: EditText
     private lateinit var datePickerBtn: Button
+    private lateinit var deleteBtn: Button
+    private lateinit var saveBtn: Button
     private var dueDate: LocalDate? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,29 +38,29 @@ class NewTaskSheet(var taskItem: TaskItem?): BottomSheetDialogFragment() {
 
         //TODO: app is crashing on trying to initialize taskVoiewModel
 
-        saveBtn = view.findViewById(R.id.saveBtn)
         taskNameInput = view.findViewById(R.id.name)
-        taskSheetTitle = view.findViewById(R.id.taskSheetTitle)
+        tagInput = view.findViewById(R.id.tagEditText)
         datePickerBtn = view.findViewById(R.id.datePickerBtn)
-
-        //if we're editing a pre existing task:
-        if (taskItem != null) {
-            taskSheetTitle.text = "Edit Task"
-            val editable = Editable.Factory.getInstance()
-            taskNameInput.text = editable.newEditable(taskItem!!.name)
-
-            if (taskItem!!.dueDate() != null) {
-                dueDate = taskItem!!.dueDate()
-            }
-
-        } else {
-            taskSheetTitle.text = "New Task"
-        }
-
+        deleteBtn = view.findViewById(R.id.deleteBtn)
+        saveBtn = view.findViewById(R.id.saveBtn)
 
         val datePicker: MaterialDatePicker<Long>
 
+        if (taskItem != null) {
+            taskNameInput.setText(taskItem!!.name)
+            tagInput.setText(taskItem!!.tag)
+
+            deleteBtn.visibility = Button.VISIBLE
+            deleteBtn.setOnClickListener {
+                taskViewModel.deleteTaskItem(taskItem!!)
+                dismiss()
+            }
+
+        }
+
         if ((taskItem != null) and (taskItem?.dueDate() != null)) {
+
+            datePickerBtn.text = taskItem!!.dueDateString
             val zoneID: ZoneId = ZoneId.systemDefault()
             val prevDueDate = taskItem!!.dueDate()!!.atStartOfDay(zoneID).toInstant().toEpochMilli()
             datePicker =
@@ -93,11 +89,14 @@ class NewTaskSheet(var taskItem: TaskItem?): BottomSheetDialogFragment() {
 
         }
 
-
         saveBtn.setOnClickListener {
             saveAction()
         }
+
+
+
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -108,12 +107,18 @@ class NewTaskSheet(var taskItem: TaskItem?): BottomSheetDialogFragment() {
     }
 
     private fun saveAction() {
-     val name = taskNameInput.text.toString()
+        val tag = tagInput.text.toString()
+        var name = taskNameInput.text.toString()
+
+        if (taskNameInput.text.toString() == "") {
+            name = "New Task"
+        }
+
         val dueDateString = if (dueDate == null) null
         else TaskItem.dateFormatter.format(dueDate)
 
         if (taskItem == null) {
-            val newTask = TaskItem(name, dueDateString)
+            val newTask = TaskItem(name, tag, dueDateString)
             taskViewModel.addTaskItem(newTask)
         } else {
             taskItem!!.name = name

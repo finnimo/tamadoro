@@ -1,53 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewTaskSheet">
+    tools:context=".fragments.NewTaskSheet">
 
-    <!-- TODO: Update blank fragment layout -->
 
-    <TextView
-        style="@style/TextAppearance.AppCompat.Title"
-        android:id="@+id/taskSheetTitle"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title" >
-    </TextView>
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-    <TextView
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Task Name" >
-    </TextView>
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox.Dense"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/name"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Name" />
+            android:layout_gravity="center_vertical"
+            android:text="Due Date: " />
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <Button
+            android:id="@+id/datePickerBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="None"
+            tools:layout_editor_absoluteX="284dp"
+            tools:layout_editor_absoluteY="417dp" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/datePickerBtn"
-        android:layout_width="102dp"
+    </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="due date" />
+        android:gravity="center"
+        android:hint="New Task"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.button.MaterialButton
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/name">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Tag: " />
+
+        <EditText
+            android:id="@+id/tagEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:hint="Enter Tag" />
+
+    </LinearLayout>
+
+    <Button
         android:id="@+id/saveBtn"
-        android:layout_width="102dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="save"/>
+        android:text="Save"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
 
-</LinearLayout>
+    <Button
+        android:id="@+id/deleteBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.taskitemdatabase
 
 import android.content.Context
 import androidx.room.Database

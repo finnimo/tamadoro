@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import io.github.finnimo.tamadoro.PetFragment
 import io.github.finnimo.tamadoro.R
 import io.github.finnimo.tamadoro.StatsFragment
-import io.github.finnimo.tamadoro.TasksFragment
+import io.github.finnimo.tamadoro.fragments.TasksFragment
 import io.github.finnimo.tamadoro.databinding.ActivityMainBinding
 import io.github.finnimo.tamadoro.fragments.TimerFragment
 

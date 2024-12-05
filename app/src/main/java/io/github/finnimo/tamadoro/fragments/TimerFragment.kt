@@ -52,7 +52,7 @@ class TimerFragment : Fragment() {
     // BUTTONS
 
     private lateinit var startBtn: Button
-    private var skipButton: Button? = null
+    private lateinit var skipButton: Button
     private var breakModeBtn: Button? = null
     private var focusModeBtn: Button? = null
     private var newTag: EditText? = null
@@ -177,7 +177,7 @@ class TimerFragment : Fragment() {
         }
 
 
-        skipButton?.setOnClickListener {
+        skipButton.setOnClickListener {
             skipTimer()
             timeRemaining = if (isPomodoro){
                 initialTime
@@ -229,7 +229,7 @@ class TimerFragment : Fragment() {
         }.start()
 
         startBtn.text = "Pause"
-        skipButton?.visibility = Button.INVISIBLE
+        skipButton.visibility = Button.INVISIBLE
         timerRunning = true
     }
 
@@ -250,7 +250,7 @@ class TimerFragment : Fragment() {
     private fun pauseTimer() {
         timer?.cancel()
         startBtn.text = "Resume"
-        skipButton?.visibility = Button.VISIBLE
+        skipButton.visibility = Button.VISIBLE
         timerRunning = false
     }
 
@@ -282,7 +282,7 @@ class TimerFragment : Fragment() {
         }
         updateButtonAppearance( )
         startBtn.text = "Start"
-        skipButton?.visibility = Button.INVISIBLE
+        skipButton.visibility = Button.INVISIBLE
 
         //resetting timer
         timerRunning = false

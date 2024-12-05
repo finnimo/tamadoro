@@ -20,24 +20,33 @@
             android:scaleY="1.5"
             android:src="@drawable/ic_checkbox_unchecked"/>
 
-        <TextView
-            android:text="temp name"
-            style="@style/TextAppearance.AppCompat.Title"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/taskName"/>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
-            android:text="due date"
-            style="@style/TextAppearance.AppCompat.Title"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/taskDueDate"
-            android:layout_marginLeft="20dp"
-            />
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:textSize="15dp"
+            android:layout_marginTop="5dp"
+            android:text="due date" />
+
+        <TextView
+            android:id="@+id/taskName"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:textSize="27dp"
+            android:text="task name" />
+
+
+
+    </LinearLayout>
 
 
     </LinearLayout>
