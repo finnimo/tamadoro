@@ -1,4 +1,4 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.sessiondatabase
 
 import android.content.Context
 import android.content.SharedPreferences

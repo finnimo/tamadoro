@@ -4,8 +4,10 @@ import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.media.RingtoneManager
@@ -23,6 +25,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -31,19 +35,15 @@ import androidx.core.content.ContextCompat
 import io.github.finnimo.tamadoro.activities.MainActivity
 import io.github.finnimo.tamadoro.Pet
 import io.github.finnimo.tamadoro.R
-import io.github.finnimo.tamadoro.Statistics
+import io.github.finnimo.tamadoro.sessiondatabase.Statistics
 import io.github.finnimo.tamadoro.sessiondatabase.SessionManager
 import io.github.finnimo.tamadoro.activities.SettingsActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//testtesttest
-
 class TimerFragment : Fragment() {
-    // TODO: Rename and change types of parameters
 
     // VARIABLES TO ACCESS ROOMS/DATABASE & COINS CLASS
     private lateinit var manager: SessionManager
@@ -53,17 +53,22 @@ class TimerFragment : Fragment() {
 
     private lateinit var startBtn: Button
     private lateinit var skipButton: Button
-    private var breakModeBtn: Button? = null
-    private var focusModeBtn: Button? = null
-    private var newTag: EditText? = null
-    private var deleteStats: Button? = null
-    private var settingsBtn: Button? = null
+    private lateinit var breakModeBtn: Button
+    private lateinit var focusModeBtn: Button
+    private lateinit var newTag: EditText
+    private lateinit var deleteStats: Button
+    private lateinit var settingsBtn: Button
+
+    private lateinit var pickerContainer: LinearLayout
+    private lateinit var hoursPicker: NumberPicker
+    private lateinit var minutesPicker: NumberPicker
+    private lateinit var durationSave: Button
 
     private lateinit var button:Button
 
     // TEXTVIEW DECLARATIONS
 
-    private var timerTextView: TextView? = null
+    private lateinit var timerTextView: TextView
 
     //TAG FOR SESSION TYPE
 
@@ -78,11 +83,12 @@ class TimerFragment : Fragment() {
     private var isPomodoro: Boolean = true //boolean value to indicate whether a timer is in break or pomodoro mode
     private var breakLength = 5 * 1000L
 
+
     //NOTIFICATIONS
-    private val CHANNEL_ID = "ChannelID"
-    private val CHANNEL_NAME = "NotificationChannel"
-    private val NOTIF_ID = 1
-    private val NOTIF_PERMISSION_REQUEST_CODE = 100
+    private val channelID = "ChannelID"
+    private val channelName = "NotificationChannel"
+    private val notifID = 1
+    private val notifPermissionRequestCode = 100
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -96,6 +102,12 @@ class TimerFragment : Fragment() {
         //Initializing database and grabbing sessions first so that I don't accidentally access database before it's initialized, avoiding this crash
 
         manager = SessionManager(requireContext())
+
+        initialTime = requireContext().getSharedPreferences("TAMADORO_FOCUSDURATION", Context.MODE_PRIVATE)
+            .getLong("TAMADORO_FOCUSDURATION",25 * 60 * 1000L)
+        breakLength = requireContext().getSharedPreferences("TAMADORO_BREAKDURATION", Context.MODE_PRIVATE)
+            .getLong("TAMADORO_BREAKDURATION",5 * 60 * 1000L)
+
         GlobalScope.launch(Dispatchers.Main) {
 
             manager.getAllSessions()
@@ -121,18 +133,23 @@ class TimerFragment : Fragment() {
         focusModeBtn = view.findViewById(R.id.focusTimer)
         deleteStats = view.findViewById(R.id.deleteStats)
 
+        hoursPicker = view.findViewById(R.id.hoursPicker)
+        minutesPicker = view.findViewById(R.id.minutesPicker)
+        pickerContainer = view.findViewById(R.id.pickerContainer)
+        durationSave = view.findViewById(R.id.durationSaverBtn)
+
         button = view.findViewById(R.id.button)
 
         //TAG
 
-        tag = newTag?.text.toString()
+        tag = newTag.text.toString()
 
         //Formats the timer to display the right count down starting number
-        timerTextView?.text = formatTime(initialTime)
+        timerTextView.text = formatTime(initialTime)
 
         // The following code actively listens for change in editText component containing the session tag, whenever it changes, that's the tag that'll be appended to the session on timer finish
 
-        newTag?.addTextChangedListener(object : TextWatcher {
+        newTag.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // Optional: Do something before text changes
             }
@@ -147,22 +164,77 @@ class TimerFragment : Fragment() {
             }
         })
 
-        // BUTTON CLICKED ACTIONS
+        // UI COMPONENTS CLICKED ACTIONS
 
-        deleteStats?.setOnClickListener {
+        timerTextView.setOnClickListener {
+            if (!timerRunning) {
+
+                pickerContainer.visibility = LinearLayout.VISIBLE
+
+                hoursPicker.minValue = 0
+                hoursPicker.maxValue = 12
+                minutesPicker.minValue = 0
+                minutesPicker.maxValue = 59
+
+                val currentDuration: Long
+                val durationType: String
+
+                if (isPomodoro) {
+                    currentDuration = initialTime
+                    durationType = "FOCUSDURATION"
+                } else {
+                    currentDuration = breakLength
+                    durationType = "BREAKDURATION"
+                }
+
+                val initHours: Int = (currentDuration / 3600000).toInt()
+                val initMins: Int = (((currentDuration % 3600000) / 60000)).toInt()
+
+                hoursPicker.value = initHours
+                minutesPicker.value = initMins
+
+                durationSave.setOnClickListener {
+
+                    val hours = hoursPicker.value
+                    val mins = minutesPicker.value
+
+                    val durationInMillis: Long = ((hours * 3600) + (mins * 60)) * 1000L
+
+                    if (isPomodoro) {
+                        initialTime = durationInMillis
+                    } else {
+                        breakLength = durationInMillis
+                    }
+                    timeRemaining = durationInMillis
+                    Log.d("initial time now", initialTime.toString())
+
+                    requireContext().getSharedPreferences("TAMADORO_$durationType", Context.MODE_PRIVATE).edit().
+                    putLong("TAMADORO_$durationType", durationInMillis).apply()
+
+                    timerTextView.text = formatTime(timeRemaining)
+                    pickerContainer.visibility = LinearLayout.INVISIBLE
+
+                }
+
+
+            }
+
+        }
+
+        deleteStats.setOnClickListener {
             manager.deleteAllSessions()
         }
 
-        focusModeBtn?.setOnClickListener {
+        focusModeBtn.setOnClickListener {
             isPomodoro = true
-            timerTextView?.text = formatTime(initialTime)
+            timerTextView.text = formatTime(initialTime)
             timeRemaining = initialTime
             updateButtonAppearance()
         }
 
-        breakModeBtn?.setOnClickListener {
+        breakModeBtn.setOnClickListener {
             isPomodoro = false
-            timerTextView?.text = formatTime(breakLength)
+            timerTextView.text = formatTime(breakLength)
             timeRemaining = breakLength
             updateButtonAppearance()
         }
@@ -187,7 +259,7 @@ class TimerFragment : Fragment() {
 
         }
 
-        settingsBtn?.setOnClickListener {
+        settingsBtn.setOnClickListener {
             val openSettingsActivity = Intent(requireActivity(), SettingsActivity::class.java)
             startActivity(openSettingsActivity)
         }
@@ -197,12 +269,9 @@ class TimerFragment : Fragment() {
         }
 
         timeRemaining = initialTime
-        timerTextView?.text = formatTime(initialTime)
+        timerTextView.text = formatTime(initialTime)
 
     }
-
-
-
 
 
 
@@ -210,20 +279,20 @@ class TimerFragment : Fragment() {
         timer = object : CountDownTimer(time, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 timeRemaining = millisUntilFinished
-                timerTextView?.text = formatTime(millisUntilFinished)
+                timerTextView.text = formatTime(millisUntilFinished)
             }
 
             override fun onFinish() { //WHEN TIMER ENDS
                 val minutes = (initialTime / 1000).toInt()
                 //val minutes = (initialTime / 60000, above is for debug
                 if (isPomodoro) {
-                    //logSession(minutes)
+                    logSession(minutes)
 
                 } else {
                     stopTimer(breakLength)
                 }
                 showNotification()
-                logSession(minutes)
+
 
             }
         }.start()
@@ -237,7 +306,7 @@ class TimerFragment : Fragment() {
         manager.addSession(minutes, tag)
         Pet.addCoins(requireContext(),minutes)
         stopTimer(initialTime)
-        timerTextView?.text = "Finished!"
+        timerTextView.text = "Finished!"
         Statistics.updateStreaks(requireContext())
         Statistics.updateLastSessionDate(requireContext())
 
@@ -256,7 +325,7 @@ class TimerFragment : Fragment() {
 
     private fun stopTimer(time: Long) {
         timer?.cancel()
-        timerTextView?.text = formatTime(time)
+        timerTextView.text = formatTime(time)
         startBtn.text = "Start"
         timerRunning = false
         timeRemaining = time
@@ -272,12 +341,12 @@ class TimerFragment : Fragment() {
             manager.addSession(timeFocusedAlready,tag)
             //statistics.setLastSessionDate(LocalDateTime.now())
             timer?.cancel()//cancels timer
-            timerTextView?.text = formatTime(breakLength)//resets text view
+            timerTextView.text = formatTime(breakLength)//resets text view
             isPomodoro = false
 
         } else {
             timer?.cancel()
-            timerTextView?.text = formatTime(initialTime)
+            timerTextView.text = formatTime(initialTime)
             isPomodoro = true
         }
         updateButtonAppearance( )
@@ -288,6 +357,8 @@ class TimerFragment : Fragment() {
         timerRunning = false
 
     }
+
+
 
     private fun showNotification() {
 
@@ -308,7 +379,7 @@ class TimerFragment : Fragment() {
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
 
-            val builder = NotificationCompat.Builder(requireContext(), CHANNEL_ID)
+            val builder = NotificationCompat.Builder(requireContext(), channelID)
                 .setContentTitle("Title")
                 .setContentText("This is a sample notif")
                 .setSmallIcon(R.drawable.notification_temp)
@@ -327,16 +398,9 @@ class TimerFragment : Fragment() {
                         Manifest.permission.POST_NOTIFICATIONS
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
                     return
                 }
-                notify(NOTIF_ID, builder.build())
+                notify(notifID, builder.build())
             }
         }
     }
@@ -345,8 +409,8 @@ class TimerFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
 
             val channel = NotificationChannel(
-                CHANNEL_ID,
-                CHANNEL_NAME,
+                channelID,
+                channelName,
                 NotificationManager.IMPORTANCE_HIGH)
             val notifmanager = requireContext().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notifmanager.createNotificationChannel(channel)
@@ -357,13 +421,15 @@ class TimerFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 // Permission is not granted, request it
-                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), NOTIF_PERMISSION_REQUEST_CODE)
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), notifPermissionRequestCode)
             } else {
                 // Permission already granted, you can show notifications
 
             }
         }
     }
+
+
 
 
     private fun getColour(attr: Int): Int {
@@ -380,11 +446,11 @@ class TimerFragment : Fragment() {
 
 
         if (isPomodoro) {
-            focusModeBtn?.backgroundTintList = ColorStateList.valueOf(secondary)
-            breakModeBtn?.backgroundTintList = ColorStateList.valueOf(primary)
+            focusModeBtn.backgroundTintList = ColorStateList.valueOf(secondary)
+            breakModeBtn.backgroundTintList = ColorStateList.valueOf(primary)
         } else {
-            breakModeBtn?.backgroundTintList = ColorStateList.valueOf(secondary)
-            focusModeBtn?.backgroundTintList = ColorStateList.valueOf(primary)
+            breakModeBtn.backgroundTintList = ColorStateList.valueOf(secondary)
+            focusModeBtn.backgroundTintList = ColorStateList.valueOf(primary)
         }
 
     }
