@@ -1,5 +1,6 @@
 package io.github.finnimo.tamadoro.fragments
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,8 +37,6 @@ class NewTaskSheet(var taskItem: TaskItem?): BottomSheetDialogFragment() {
             TaskItemModelFactory((requireActivity().application as TodoApplication).repository)
         ).get(TaskViewModel::class.java)
 
-        //TODO: app is crashing on trying to initialize taskVoiewModel
-
         taskNameInput = view.findViewById(R.id.name)
         tagInput = view.findViewById(R.id.tagEditText)
         datePickerBtn = view.findViewById(R.id.datePickerBtn)
@@ -69,6 +68,14 @@ class NewTaskSheet(var taskItem: TaskItem?): BottomSheetDialogFragment() {
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .setSelection(prevDueDate)
                     .build()
+
+            //next 3 lines are so that if someone made no changes to dueDate, it would be what the prev already set dueDate was.
+            dueDate = Instant.ofEpochMilli(prevDueDate)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+
+
+
         } else {
             datePicker =
                 MaterialDatePicker.Builder.datePicker()
@@ -87,16 +94,24 @@ class NewTaskSheet(var taskItem: TaskItem?): BottomSheetDialogFragment() {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()
 
+            datePickerBtn.text = dueDate.toString()
+
         }
 
         saveBtn.setOnClickListener {
             saveAction()
         }
 
-
-
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+
+        if (taskItem != null) {
+            saveAction()
+        }
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

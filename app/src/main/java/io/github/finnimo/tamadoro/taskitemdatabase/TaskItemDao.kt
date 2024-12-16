@@ -27,5 +27,4 @@ interface TaskItemDao {
     @Query("DELETE FROM TaskItem WHERE completed = 1")
     suspend fun deleteCompletedTasks()
 
-
 }

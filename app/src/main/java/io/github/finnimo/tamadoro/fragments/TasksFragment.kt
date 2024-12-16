@@ -65,7 +65,6 @@ class TasksFragment : Fragment(), onTaskCompletedListener {
     }
 
     override fun onTaskCompletedChanged(task: TaskItem) {
-
         taskViewModel.updateTaskItem(task)
     }
 
@@ -77,6 +76,5 @@ class TasksFragment : Fragment(), onTaskCompletedListener {
             }
         }
     }
-
 
 }
