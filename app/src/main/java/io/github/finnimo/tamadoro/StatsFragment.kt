@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import io.github.finnimo.tamadoro.sessiondatabase.SessionManager
+import io.github.finnimo.tamadoro.sessiondatabase.Statistics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

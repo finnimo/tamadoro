@@ -25,7 +25,9 @@ public interface SessionDao {
     //get duration from today
     @Query("SELECT SUM(seconds) FROM Session WHERE ((dateTime >= :startDate) and (dateTime <= :endDate))")
     fun getTotalDurationInPeriod(startDate: Long, endDate: Long): Int
+    //currently working in seconds, make sure it works in minutes
+    @Query("SELECT * FROM Session WHERE dateTime >= :startDate")
+    fun getSessionInPeriod(startDate: Long): List<Session>
 
-    //currently working in seconds, make sure it wokrs in minutes
 
 }

@@ -4,7 +4,10 @@
     android:id="@+id/taskItemContainer"
     android:layout_width="match_parent"
     android:layout_height="90dp"
-    app:cardCornerRadius="5dp">
+    app:cardCornerRadius="5dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginHorizontal="7dp"
+    app:cardBackgroundColor="?attr/colorPrimary">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,24 +23,35 @@
             android:scaleY="1.5"
             android:src="@drawable/ic_checkbox_unchecked"/>
 
-        <TextView
-            android:text="temp name"
-            style="@style/TextAppearance.AppCompat.Title"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/taskName"/>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
-            android:text="due date"
-            style="@style/TextAppearance.AppCompat.Title"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/taskDueDate"
-            android:layout_marginLeft="20dp"
-            />
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:textSize="15dp"
+            android:layout_marginTop="8dp"
+            android:text="Due date"
+            android:textColor="?attr/colorOnPrimary"/>
+
+        <TextView
+            android:id="@+id/taskName"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:textSize="27dp"
+            android:text="task name"
+            android:textColor="?attr/colorOnPrimary"/>
+
+
+
+    </LinearLayout>
 
 
     </LinearLayout>

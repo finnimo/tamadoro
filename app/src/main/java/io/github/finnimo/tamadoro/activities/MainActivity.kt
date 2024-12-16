@@ -7,27 +7,27 @@ import androidx.fragment.app.Fragment
 import io.github.finnimo.tamadoro.PetFragment
 import io.github.finnimo.tamadoro.R
 import io.github.finnimo.tamadoro.StatsFragment
-import io.github.finnimo.tamadoro.TasksFragment
+import io.github.finnimo.tamadoro.fragments.TasksFragment
 import io.github.finnimo.tamadoro.databinding.ActivityMainBinding
 import io.github.finnimo.tamadoro.fragments.TimerFragment
+import io.github.finnimo.tamadoro.sessiondatabase.SessionsDatabase
 
 //imports for notifications
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
+    private lateinit var sessionsDatabase: SessionsDatabase
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        Log.d("logcat working","logcat is up and running")
 
         //HANDLING THEME BEFORE EVERYTHING IS RENDERED
         val sharedPrefs = getSharedPreferences("TAMADORO_THEME", MODE_PRIVATE)
         val selectedTheme = sharedPrefs.getString("TAMADORO_THEME", "light") ?: "light"
 
+
         when (selectedTheme) {
             "dark" -> setTheme(R.style.darkTheme)
-            //"x" -> setTheme(R.style.x)  // Add additional themes as needed
+
             else -> setTheme(R.style.lightTheme) // Default to light
         }
         super.onCreate(savedInstanceState)
@@ -62,12 +62,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadFragment(fragment: Fragment){
+
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frameLayout, fragment) // Replace with your fragment container's ID
         transaction.commit()
 
     }
-
-
-
 }

@@ -1,14 +1,14 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.taskitemdatabase
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 
 @Entity
 class TaskItem(
     var name: String,
+    var tag: String,
     var  dueDateString: String?,
     var completed: Boolean = false,
     @PrimaryKey(autoGenerate = true) var taskID: Int = 0

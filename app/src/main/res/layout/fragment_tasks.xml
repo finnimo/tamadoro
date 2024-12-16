@@ -15,19 +15,50 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/todoListRecyclerView"
+        <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-           />
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:layout_marginLeft="20dp"
+                android:text="To-Do"
+                android:textSize="30dp"
+                android:textColor="?attr/colorOnPrimary">
+
+        </TextView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/todoListRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/newTaskBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:textColor="?attr/colorOnPrimary"
             android:layout_gravity="bottom|right"
             android:text="new task" />
+
+        <Button
+            android:id="@+id/clearCompletedBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:textColor="?attr/colorOnPrimary"
+            android:layout_gravity="bottom|left"
+            android:text="Clear" />
 
     </FrameLayout>
 

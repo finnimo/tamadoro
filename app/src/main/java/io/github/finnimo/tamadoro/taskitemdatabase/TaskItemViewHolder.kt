@@ -1,4 +1,4 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.taskitemdatabase
 
 import android.graphics.Paint
 import android.view.View
@@ -7,10 +7,13 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import io.github.finnimo.tamadoro.R
+import io.github.finnimo.tamadoro.fragments.NewTaskSheet
 import java.time.format.DateTimeFormatter
 
 class TaskItemViewHolder(
     private val view: View,
+    private val listener: onTaskCompletedListener
 ): RecyclerView.ViewHolder(view) {
 
     private val taskName: TextView = view.findViewById(R.id.taskName)
@@ -27,18 +30,19 @@ class TaskItemViewHolder(
             taskDueDate.text = ""
         }
 
+        if (taskItem.completed) {
+            taskName.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            checkBoxBtn.setImageResource(R.drawable.ic_checkbox_checked)
+
+        } else {
+            taskName.setPaintFlags(0)
+            checkBoxBtn.setImageResource(R.drawable.ic_checkbox_unchecked)
+        }
+
         checkBoxBtn.setOnClickListener {
 
-            if (taskItem.completed) {
-                taskName.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-                checkBoxBtn.setImageResource(R.drawable.ic_checkbox_checked)
-
-            } else {
-                taskName.setPaintFlags(0)
-                checkBoxBtn.setImageResource(R.drawable.ic_checkbox_unchecked)
-            }
-
             taskItem.completed = !taskItem.completed
+            listener.onTaskCompletedChanged(taskItem)
 
         }
 
@@ -47,7 +51,6 @@ class TaskItemViewHolder(
             NewTaskSheet(taskItem).show((itemView.context as FragmentActivity).supportFragmentManager, "newTask")
 
         }
-
 
     }
 

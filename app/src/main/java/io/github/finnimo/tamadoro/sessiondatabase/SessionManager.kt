@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.ZoneId
+import java.util.Calendar
 
 
 class SessionManager(context: Context) {
@@ -32,7 +33,7 @@ class SessionManager(context: Context) {
         }
     }
 
-    fun addSession(seconds: Int, tag: String) {
+    fun addSession(seconds: Int, tag: String) {//change this to minutes when necessary
         GlobalScope.launch(Dispatchers.IO) {
             val newSession = Session(
                 seconds = seconds,
@@ -60,6 +61,31 @@ class SessionManager(context: Context) {
         return sessionDao.getTotalDurationInPeriod(start,System.currentTimeMillis())
     }
 
+
+    fun getTotalDurationThisWeek(): Int {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        val startOfDay = calendar.timeInMillis
+        val durationThisWeek: Int = sessionDao.getTotalDurationInPeriod(startOfDay,System.currentTimeMillis())
+        return durationThisWeek
+    }
+
+    fun getTotalSessionToday(): Int {
+
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        val startOfDay = calendar.timeInMillis
+        val sessionsToday = sessionDao.getSessionInPeriod(startOfDay)
+        Log.d("no. of sessions",sessionsToday.size.toString())
+        return sessionsToday.size
+
+    }
 
 
 
