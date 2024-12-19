@@ -11,15 +11,11 @@ import java.time.temporal.ChronoUnit
 class Statistics {
     companion object {
 
-        private fun getLastSessionDateSP(context: Context): SharedPreferences {
-            return context.getSharedPreferences("TAMADORO_LASTDATE", Context.MODE_PRIVATE)
-        }
-
         private fun getCurrentStreakSP(context: Context): SharedPreferences {
             return context.getSharedPreferences("TAMADORO_CURRENTSTREAK", Context.MODE_PRIVATE)
         }
 
-        private fun getCurrentStreak(context: Context): Int {
+        fun getCurrentStreak(context: Context): Int {
             val sharedPref = getCurrentStreakSP(context)
             return sharedPref.getInt("TAMADORO_CURRENTSTREAK",0)
         }
@@ -46,56 +42,78 @@ class Statistics {
         }
 
         fun updateLastSessionDate(context:  Context){
-            val sharedPref = getLastSessionDateSP(context)
+            val sharedPref = context.getSharedPreferences("TAMADORO_LASTDATE", Context.MODE_PRIVATE)
             val newDate = System.currentTimeMillis()
 
             // for debugs
             /*val x = sharedPref.getLong("TAMADORO_LASTDATE",0)
             Log.d("first session date..","current session date:"+x.toString())*/
 
-            sharedPref.edit().putLong("TAMADORO_LASTDATE", newDate).apply()
+            //sharedPref.edit().putLong("TAMADORO_LASTDATE", newDate).apply()
             // for debugs
-            /*sharedPref.edit().putLong("TAMADORO_LASTDATE", 1727790817000).apply()
-            Log.d("session date..","new date:"+ sharedPref.getLong("TAMADORO_LASTDATE",0).toString())*/
+            sharedPref.edit().putLong("TAMADORO_LASTDATE", newDate).apply()
+            Log.d("Last Session Date recorded:","new last date:"+ sharedPref.getLong("TAMADORO_LASTDATE",0).toString())
         }
 
         fun updateStreaks(context: Context) {
-            val lastSessionSP = getLastSessionDateSP(context)
-            val highestStreakSP = getHighestStreakSP(context)
+            val lastSessionSP = context.getSharedPreferences("TAMADORO_LASTDATE", Context.MODE_PRIVATE)
             val currentStreak = getCurrentStreak(context)
-            val highestStreak = highestStreakSP.getInt("TAMADORO_HIGHESTSTREAK",0)
 
             val lastSessionLong = lastSessionSP.getLong("TAMADORO_LASTDATE",0)
-            val lastSessionLocalDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastSessionLong), ZoneId.systemDefault())
-            val daysApart = (ChronoUnit.DAYS.between(lastSessionLocalDate, LocalDateTime.now())).toInt()
-            //val daysApart = (ChronoUnit.DAYS.between(lastSessionLocalDate, LocalDateTime.of(2024, 10, 3, 9, 0))).toInt()
-            //val daysApart = (ChronoUnit.DAYS.between(lastSessionLocalDate, LocalDateTime.of(2024, 12, 2, 7, 0))).toInt()
-            //Log.d("Streak before calc", currentStreak.toString())
 
-            if (daysApart > 1) {
-                // Reset if its been more than 1 day
+            val lastSessionLocalDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastSessionLong), ZoneId.systemDefault()).toLocalDate()
+            //val currentDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(1734722412000), ZoneId.systemDefault())
+
+            val currentDate = LocalDateTime.now().toLocalDate()
+            val daysApart = ChronoUnit.DAYS.between(lastSessionLocalDate, currentDate).toInt()
+
+
+
+            //val daysApart = (ChronoUnit.DAYS.between(lastSessionLocalDate, currentDate)).toInt()
+
+            Log.d("Days Apart last session date & current date", daysApart.toString())
+
+            if (lastSessionLong == 0.toLong()) {
+
                 editCurrentStreak(context, true)
 
-            } else if ((daysApart == 1) or (currentStreak == 0)) {
-                //if its been 1 day since last session:
-                editCurrentStreak(context, true)
+            } else {
+                if ((daysApart == 1) || (currentStreak == 0)) {
+                    //if its been 1 day since last session:
+                    editCurrentStreak(context, true)
+                } else if (daysApart > 1) {
+                    // Reset if its been more than 1 day
+                    editCurrentStreak(context, false)
+                }
             }
 
-            if (highestStreak < currentStreak) {
-                highestStreakSP.edit().putInt("TAMADORO_HIGHESTSTREAK", currentStreak).apply()
-            }
+
+
+            updateHighestStreak(context)
             //for debug
             /*val x = currentStreakSP.getInt("TAMADORO_CURRENTSTREAK",0)
             Log.d("Streak after calc",x.toString())*/
+
             Log.d("Last session logged at: ",lastSessionSP.getLong("TAMADORO_LASTDATE", 0).toString())
             Log.d("Current time:", System.currentTimeMillis().toString())
+            Log.d("current streak:", getCurrentStreak(context).toString())
+
+        }
+
+        private fun updateHighestStreak(context: Context) {
+            val highestStreak = getHighestStreak(context)
+            val currentStreak = getCurrentStreak(context)
+            if (currentStreak >= highestStreak) {
+                context.getSharedPreferences("TAMADORO_HIGHESTSTREAK", Context.MODE_PRIVATE).edit().putInt("TAMADORO_HIGHESTSTREAK",currentStreak).apply()
+            }
         }
 
         fun streakCheckOnViewCreated(context: Context): Int{
-            val lastSessionSP = getLastSessionDateSP(context)
+            val lastSessionSP = context.getSharedPreferences("TAMADORO_LASTDATE", Context.MODE_PRIVATE)
             val lastSessionLong = lastSessionSP.getLong("TAMADORO_LASTDATE",0)
             val lastSessionLocalDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastSessionLong), ZoneId.systemDefault())
-            val daysApart = (ChronoUnit.DAYS.between(lastSessionLocalDate, LocalDateTime.now())).toInt()
+
+            val daysApart = ChronoUnit.DAYS.between(lastSessionLocalDate, LocalDateTime.now()).toInt()
             if (daysApart > 1) {
                 editCurrentStreak(context, false)
             }

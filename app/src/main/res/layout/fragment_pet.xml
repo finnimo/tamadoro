@@ -4,58 +4,212 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PetFragment">
+    tools:context=".fragments.PetFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+
     <TextView
-        android:id="@+id/coinsTV"
-        android:layout_width="wrap_content"
+
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+
         android:layout_height="wrap_content"
-        android:text="Coins"
-        android:textSize="30dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="20dp"
+        android:text="Happiness %"
+        android:textColor="?attr/colorOnPrimary"
 
-    <TextView
+        app:layout_constraintTop_toTopOf="parent">
+
+    </TextView>
+
+    <ImageView
+
         android:id="@+id/happinessMeter"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Happiness"
-        android:textSize="30dp"
+        android:adjustViewBounds="true"
+
+        android:padding="0dp"
+        android:src="@drawable/happiness_1"
+        app:layout_constraintEnd_toStartOf="@+id/empty_space"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/coinsTV"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintWidth_percent="0.6" />
+
+    <View
+        android:id="@+id/empty_space"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.2">
+    </View>
 
-    <TextView
-        android:id="@+id/weeklyGoalTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:text="Weekly Goal"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline4"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/sessionsTodayTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sessions TOday"
-        android:textSize="30dp"
-        app:layout_constraintTop_toTopOf="@+id/guideline3"
-        tools:layout_editor_absoluteX="110dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="491dp" />
+        app:layout_constraintEnd_toStartOf="@+id/happinessMeter"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintWidth_percent="0.2">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_coin">
+        </ImageView>
+
+        <TextView
+            android:id="@+id/coinsTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="000"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="30dp">
+        </TextView>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/happinessMeter">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Goal Hrs:"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="20dp"></TextView>
+
+        <TextView
+            android:id="@+id/weeklyGoalTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Weekly Goal"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="30dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/happinessMeter" />
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="295dp" />
+        app:layout_constraintGuide_percent="0.28170595" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/cat_1"
+        app:layout_constraintTop_toTopOf="@+id/guideline4"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Today you have completed"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="27dp">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/sessionsTodayTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sessions Today"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="40dp"
+            app:layout_constraintTop_toTopOf="@+id/guideline3"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sessions"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="28dp">
+
+        </TextView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pickerContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:textColor="?attr/colorOnPrimary"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="147dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Goal"
+            android:textColor="?attr/colorOnPrimary">
+
+        </TextView>
+
+        <LinearLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <NumberPicker
+                android:id="@+id/hoursPicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnPrimary" />
+
+            <NumberPicker
+                android:id="@+id/minutesPicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/durationSaverBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save">
+
+        </Button>
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

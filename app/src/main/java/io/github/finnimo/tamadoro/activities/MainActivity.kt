@@ -1,12 +1,11 @@
 package io.github.finnimo.tamadoro.activities
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 //imports for working with xml based ui
 import androidx.fragment.app.Fragment
-import io.github.finnimo.tamadoro.PetFragment
+import io.github.finnimo.tamadoro.fragments.PetFragment
 import io.github.finnimo.tamadoro.R
-import io.github.finnimo.tamadoro.StatsFragment
+import io.github.finnimo.tamadoro.fragments.StatsFragment
 import io.github.finnimo.tamadoro.fragments.TasksFragment
 import io.github.finnimo.tamadoro.databinding.ActivityMainBinding
 import io.github.finnimo.tamadoro.fragments.TimerFragment

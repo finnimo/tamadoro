@@ -4,46 +4,114 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StatsFragment">
+    tools:context=".fragments.StatsFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
-    <TextView
-        android:id="@+id/currentStreakTextView"
-        android:layout_width="123dp"
-        android:layout_height="153dp"
-        android:text="current streak"
-        android:textSize="30dp"
-        app:layout_constraintStart_toEndOf="@+id/highestStreakTextView"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/highestStreakTextView"
-        android:layout_width="105dp"
-        android:layout_height="151dp"
-        android:text="highest streak"
-        android:textSize="30dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Highest Streak">
+                </TextView>
 
-    <TextView
-        android:id="@+id/totalDurationTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="all time"
-        android:textSize="30dp"
-        app:layout_constraintStart_toEndOf="@+id/currentStreakTextView"
-        app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/highestStreakTextView"
+                    android:layout_width="76dp"
+                    android:layout_height="104dp"
+                    android:text="highest streak"
+                    android:textSize="30dp"/>
 
-    <TextView
-        android:id="@+id/totalDurationThisWeekTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="this week"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/totalDurationTextView"
-        app:layout_constraintTop_toTopOf="parent" />
+            </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Current Streak">
+            </TextView>
+            <TextView
+                android:id="@+id/currentStreakTextView"
+                android:layout_width="85dp"
+                android:layout_height="83dp"
+                android:text="current streak"
+                android:textSize="30dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/allTimeContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All Time">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/totalDurationTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="all time"
+                android:textSize="30dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/thisWeekContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This Week">
+            </TextView>
+
+            <TextView
+                android:id="@+id/totalDurationThisWeekTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="this week" />
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Today">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/totalDurationTodayTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+        </LinearLayout>
+
+    </LinearLayout>
     <TextView
         android:id="@+id/averageSessionDuration"
         android:layout_width="wrap_content"
@@ -51,14 +119,5 @@
         android:text="Average"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/totalDurationTodayTextView"
-        android:layout_width="113dp"
-        android:layout_height="60dp"
-        android:text="TextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/highestStreakTextView" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

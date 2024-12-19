@@ -20,10 +20,10 @@ public interface SessionDao {
     @Query("SELECT * FROM Session WHERE tag = :tag")
     fun getSessionsByTag(tag : String): List<Session>
     //get total duration
-    @Query("SELECT SUM(seconds) FROM Session")
+    @Query("SELECT SUM(minutes) FROM Session")
     fun getTotalDuration(): Int
     //get duration from today
-    @Query("SELECT SUM(seconds) FROM Session WHERE ((dateTime >= :startDate) and (dateTime <= :endDate))")
+    @Query("SELECT SUM(minutes) FROM Session WHERE ((dateTime >= :startDate) and (dateTime <= :endDate))")
     fun getTotalDurationInPeriod(startDate: Long, endDate: Long): Int
     //currently working in seconds, make sure it works in minutes
     @Query("SELECT * FROM Session WHERE dateTime >= :startDate")

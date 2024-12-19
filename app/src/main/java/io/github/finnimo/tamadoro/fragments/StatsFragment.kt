@@ -1,18 +1,21 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
+import io.github.finnimo.tamadoro.R
 import io.github.finnimo.tamadoro.sessiondatabase.SessionManager
 import io.github.finnimo.tamadoro.sessiondatabase.Statistics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.math.RoundingMode
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.ZoneId
@@ -40,7 +43,6 @@ class StatsFragment : Fragment() {
         manager = SessionManager(requireContext())
         GlobalScope.launch(Dispatchers.Main) {
             val sessions = manager.getAllSessions()
-            val size = sessions.size
             //val sessionDuration = manager.getTotalDuration()
            // averageSessionDurationTV.text = (sessionDuration/size).toString()
 
@@ -70,16 +72,20 @@ class StatsFragment : Fragment() {
                 manager.getTotalDurationThisWeek(startOfWeek)
             }
 
-            totalDurationTV.text = totalDuration.toString()
-            totalDurationTodayTV.text = totalDurationToday.toString()
-            totalDurationThisWeekTV.text = totalDurationThisWeek.toString()
+            totalDurationTV.text = "${((totalDuration.toDouble()/3600).toBigDecimal().setScale(2, RoundingMode.UP).toDouble())} Hrs"
+            totalDurationTodayTV.text = "${((totalDurationToday.toDouble()/3600).toBigDecimal().setScale(2, RoundingMode.UP).toDouble())} Hrs"
+            totalDurationThisWeekTV.text = "${(totalDurationThisWeek.toDouble()/3600).toBigDecimal().setScale(2, RoundingMode.UP).toDouble()} Hrs"
         }
 
         val highestStreak = Statistics.getHighestStreak(requireContext())
         highestStreakTV.text = highestStreak.toString()
 
-        val currentStreak = Statistics.streakCheckOnViewCreated(requireContext())
-        currentStreakTV.text = currentStreak.toString()
+        Statistics.streakCheckOnViewCreated(requireContext())
+        val currentStreak =  Statistics.getCurrentStreak(requireContext()).toString()
+        Log.d("current Streak", currentStreak)
+        currentStreakTV.text = currentStreak
+
+
 
 
 

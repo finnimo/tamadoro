@@ -1,14 +1,15 @@
-package io.github.finnimo.tamadoro
+package io.github.finnimo.tamadoro.fragments.pethandling
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import java.util.Calendar
 
-public class Pet(val context: Context) {
+class Pet(val context: Context) {
 
 
     private val totalCoins: Int = getSharedPrefs(context,"TAMADORO_COINS").getInt("TAMADORO_COINS", 0)
-    private val weeklyGoal: Int = getSharedPrefs(context,"TAMADORO_MINS_GOAL").getInt("TAMADORO_MINS_GOAL", 0)
+    private var weeklyGoal: Int = getSharedPrefs(context,"TAMADORO_MINS_GOAL").getInt("TAMADORO_MINS_GOAL", 0)
 
     fun getSharedPrefs(context: Context, name: String): SharedPreferences{
         return context.getSharedPreferences(name, Context.MODE_PRIVATE)
@@ -22,9 +23,14 @@ public class Pet(val context: Context) {
         return weeklyGoal
     }
 
+    fun changeWeeklyGoal(mins: Int) {
+        getSharedPrefs(context,"TAMADORO_MINS_GOAL").edit().putInt("TAMADORO_MINS_GOAL",mins).commit()
+        weeklyGoal = getSharedPrefs(context,"TAMADORO_MINS_GOAL").getInt("TAMADORO_MINS_GOAL", 0)
+    }
+
     fun addCoins(durationFocused: Int) {
         var coins = totalCoins
-        val noOfCoins = 10 * durationFocused
+        val noOfCoins = (0.1 * durationFocused).toInt()
         coins += noOfCoins
         getSharedPrefs(context,"TAMADORO_COINS").edit().putInt("TAMADORO_COINS",coins).apply()
 

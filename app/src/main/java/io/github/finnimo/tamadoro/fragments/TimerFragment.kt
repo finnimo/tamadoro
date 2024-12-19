@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.media.RingtoneManager
@@ -25,6 +24,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
@@ -34,14 +34,13 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.github.finnimo.tamadoro.activities.MainActivity
-import io.github.finnimo.tamadoro.Pet
+import io.github.finnimo.tamadoro.fragments.pethandling.Pet
 import io.github.finnimo.tamadoro.R
 import io.github.finnimo.tamadoro.sessiondatabase.Statistics
 import io.github.finnimo.tamadoro.sessiondatabase.SessionManager
 import io.github.finnimo.tamadoro.activities.SettingsActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 
 class TimerFragment : Fragment() {
@@ -55,12 +54,12 @@ class TimerFragment : Fragment() {
     // BUTTONS
 
     private lateinit var startBtn: Button
-    private lateinit var skipButton: Button
+    private lateinit var skipButton: ImageButton
     private lateinit var breakModeBtn: Button
     private lateinit var focusModeBtn: Button
     private lateinit var newTag: EditText
     private lateinit var deleteStats: Button
-    private lateinit var settingsBtn: Button
+    private lateinit var settingsBtn: ImageButton
 
     private lateinit var pickerContainer: LinearLayout
     private lateinit var hoursPicker: NumberPicker
@@ -271,7 +270,7 @@ class TimerFragment : Fragment() {
         }
 
         button.setOnClickListener {
-            logSession(20)
+            logSession(69)
         }
 
         timeRemaining = initialTime
@@ -310,12 +309,12 @@ class TimerFragment : Fragment() {
 
    private fun logSession(minutes: Int) {
         manager.addSession(minutes, tag)
-        pet.addCoins(minutes)
+        pet.addCoins(minutes/60)
         stopPauseTimer(false, initialTime)
         timerTextView.text = "Finished!"
+
         Statistics.updateStreaks(requireContext())
         Statistics.updateLastSessionDate(requireContext())
-
 
         //DEBUG STUFF:
         val x = pet.getTotalCoins()
@@ -432,7 +431,7 @@ class TimerFragment : Fragment() {
         return typedValue.data
     }
 
-  /*  private fun updateUI() {
+    private fun updateUI() {
         if (timerRunning) {
             settingsBtn.visibility = Button.INVISIBLE
             navbar.visibility = View.INVISIBLE
@@ -440,7 +439,7 @@ class TimerFragment : Fragment() {
             settingsBtn.visibility = Button.VISIBLE
             navbar.visibility = View.VISIBLE
         }
-    }*/
+    }
 
     private fun updateButtonAppearance() {
 

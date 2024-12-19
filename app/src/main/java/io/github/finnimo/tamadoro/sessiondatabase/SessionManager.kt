@@ -2,14 +2,12 @@ package io.github.finnimo.tamadoro.sessiondatabase
 
 import android.content.Context
 import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.room.Room
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.ZoneId
 import java.util.Calendar
 
 
@@ -33,10 +31,10 @@ class SessionManager(context: Context) {
         }
     }
 
-    fun addSession(seconds: Int, tag: String) {//change this to minutes when necessary
+    fun addSession(minutes: Int, tag: String) {//change this to minutes when necessary
         GlobalScope.launch(Dispatchers.IO) {
             val newSession = Session(
-                seconds = seconds,
+                minutes = minutes,
                 dateTime = System.currentTimeMillis(),
                 tag = tag
             )
